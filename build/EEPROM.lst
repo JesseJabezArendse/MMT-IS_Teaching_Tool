@@ -1,0 +1,189 @@
+ARM GAS  C:\Temp\cc15eQvm.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"EEPROM.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/EEPROM.c"
+  20              		.section	.text.WriteToMemory,"ax",%progbits
+  21              		.align	1
+  22              		.global	WriteToMemory
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	WriteToMemory:
+  28              	.LVL0:
+  29              	.LFB235:
+   1:Core/Src/EEPROM.c **** //********************************************************************
+   2:Core/Src/EEPROM.c **** //*                      Mech Educational Board                      *
+   3:Core/Src/EEPROM.c **** //*                         EEPROM Library                           *
+   4:Core/Src/EEPROM.c **** //*==================================================================*
+   5:Core/Src/EEPROM.c **** //* @author:    Jesse Jabez Arendse                                  *
+   6:Core/Src/EEPROM.c **** //* @date:      26-10-2023                                           *
+   7:Core/Src/EEPROM.c **** //*==================================================================*
+   8:Core/Src/EEPROM.c **** 
+   9:Core/Src/EEPROM.c **** #include "main.h"
+  10:Core/Src/EEPROM.c **** #include "EEPROM.h"
+  11:Core/Src/EEPROM.c **** 
+  12:Core/Src/EEPROM.c **** extern I2C_HandleTypeDef hi2c2;
+  13:Core/Src/EEPROM.c **** 
+  14:Core/Src/EEPROM.c **** void WriteToMemory(uint16_t Value , uint8_t RegisterAddress )
+  15:Core/Src/EEPROM.c **** {
+  30              		.loc 1 15 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 8
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 15 1 is_stmt 0 view .LVU1
+  35 0000 00B5     		push	{lr}
+  36              		.cfi_def_cfa_offset 4
+  37              		.cfi_offset 14, -4
+  38 0002 87B0     		sub	sp, sp, #28
+  39              		.cfi_def_cfa_offset 32
+  40 0004 0A46     		mov	r2, r1
+  16:Core/Src/EEPROM.c **** 	uint8_t addr[2];
+  41              		.loc 1 16 2 is_stmt 1 view .LVU2
+  17:Core/Src/EEPROM.c **** 	addr[0] = (Value >> 8) & 0xff;  // upper byte
+ARM GAS  C:\Temp\cc15eQvm.s 			page 2
+
+
+  42              		.loc 1 17 2 view .LVU3
+  43              		.loc 1 17 10 is_stmt 0 view .LVU4
+  44 0006 030A     		lsrs	r3, r0, #8
+  45 0008 8DF81430 		strb	r3, [sp, #20]
+  18:Core/Src/EEPROM.c **** 	addr[1] = (Value >> 0) & 0xff; // lower byte
+  46              		.loc 1 18 2 is_stmt 1 view .LVU5
+  47              		.loc 1 18 10 is_stmt 0 view .LVU6
+  48 000c 8DF81500 		strb	r0, [sp, #21]
+  19:Core/Src/EEPROM.c **** 
+  20:Core/Src/EEPROM.c **** 	HAL_I2C_Mem_Write(&hi2c2, (EEPROM_ADDRESS<<1)+0, RegisterAddress, 2, addr, 2, HAL_MAX_DELAY);
+  49              		.loc 1 20 2 is_stmt 1 view .LVU7
+  50 0010 4FF0FF33 		mov	r3, #-1
+  51 0014 0293     		str	r3, [sp, #8]
+  52 0016 0223     		movs	r3, #2
+  53 0018 0193     		str	r3, [sp, #4]
+  54 001a 05A9     		add	r1, sp, #20
+  55              	.LVL1:
+  56              		.loc 1 20 2 is_stmt 0 view .LVU8
+  57 001c 0091     		str	r1, [sp]
+  58 001e A021     		movs	r1, #160
+  59 0020 0248     		ldr	r0, .L3
+  60              	.LVL2:
+  61              		.loc 1 20 2 view .LVU9
+  62 0022 FFF7FEFF 		bl	HAL_I2C_Mem_Write
+  63              	.LVL3:
+  21:Core/Src/EEPROM.c **** }
+  64              		.loc 1 21 1 view .LVU10
+  65 0026 07B0     		add	sp, sp, #28
+  66              		.cfi_def_cfa_offset 4
+  67              		@ sp needed
+  68 0028 5DF804FB 		ldr	pc, [sp], #4
+  69              	.L4:
+  70              		.align	2
+  71              	.L3:
+  72 002c 00000000 		.word	hi2c2
+  73              		.cfi_endproc
+  74              	.LFE235:
+  76              		.section	.text.ReadFromMemory,"ax",%progbits
+  77              		.align	1
+  78              		.global	ReadFromMemory
+  79              		.syntax unified
+  80              		.thumb
+  81              		.thumb_func
+  83              	ReadFromMemory:
+  84              	.LVL4:
+  85              	.LFB236:
+  22:Core/Src/EEPROM.c **** 
+  23:Core/Src/EEPROM.c **** uint16_t ReadFromMemory(uint8_t RegisterAddress)
+  24:Core/Src/EEPROM.c **** {
+  86              		.loc 1 24 1 is_stmt 1 view -0
+  87              		.cfi_startproc
+  88              		@ args = 0, pretend = 0, frame = 8
+  89              		@ frame_needed = 0, uses_anonymous_args = 0
+  90              		.loc 1 24 1 is_stmt 0 view .LVU12
+  91 0000 00B5     		push	{lr}
+  92              		.cfi_def_cfa_offset 4
+  93              		.cfi_offset 14, -4
+ARM GAS  C:\Temp\cc15eQvm.s 			page 3
+
+
+  94 0002 87B0     		sub	sp, sp, #28
+  95              		.cfi_def_cfa_offset 32
+  96 0004 0246     		mov	r2, r0
+  25:Core/Src/EEPROM.c **** 	uint8_t Value[2];
+  97              		.loc 1 25 2 is_stmt 1 view .LVU13
+  26:Core/Src/EEPROM.c **** 
+  27:Core/Src/EEPROM.c **** 	HAL_I2C_Mem_Read(&hi2c2, (EEPROM_ADDRESS<<1)+1, RegisterAddress, 2, Value, 2, HAL_MAX_DELAY);
+  98              		.loc 1 27 2 view .LVU14
+  99 0006 4FF0FF33 		mov	r3, #-1
+ 100 000a 0293     		str	r3, [sp, #8]
+ 101 000c 0223     		movs	r3, #2
+ 102 000e 0193     		str	r3, [sp, #4]
+ 103 0010 05A9     		add	r1, sp, #20
+ 104 0012 0091     		str	r1, [sp]
+ 105 0014 A121     		movs	r1, #161
+ 106 0016 0648     		ldr	r0, .L7
+ 107              	.LVL5:
+ 108              		.loc 1 27 2 is_stmt 0 view .LVU15
+ 109 0018 FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 110              	.LVL6:
+  28:Core/Src/EEPROM.c ****     
+  29:Core/Src/EEPROM.c **** 
+  30:Core/Src/EEPROM.c **** 	return ((Value[0] << 8) | Value[1]);
+ 111              		.loc 1 30 2 is_stmt 1 view .LVU16
+ 112              		.loc 1 30 16 is_stmt 0 view .LVU17
+ 113 001c 9DF81400 		ldrb	r0, [sp, #20]	@ zero_extendqisi2
+ 114              		.loc 1 30 33 view .LVU18
+ 115 0020 9DF81530 		ldrb	r3, [sp, #21]	@ zero_extendqisi2
+  31:Core/Src/EEPROM.c **** }
+ 116              		.loc 1 31 1 view .LVU19
+ 117 0024 43EA0020 		orr	r0, r3, r0, lsl #8
+ 118 0028 07B0     		add	sp, sp, #28
+ 119              		.cfi_def_cfa_offset 4
+ 120              		@ sp needed
+ 121 002a 5DF804FB 		ldr	pc, [sp], #4
+ 122              	.L8:
+ 123 002e 00BF     		.align	2
+ 124              	.L7:
+ 125 0030 00000000 		.word	hi2c2
+ 126              		.cfi_endproc
+ 127              	.LFE236:
+ 129              		.text
+ 130              	.Letext0:
+ 131              		.file 2 "c:\\users\\jesse arendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-vsco
+ 132              		.file 3 "c:\\users\\jesse arendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-vsco
+ 133              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 134              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 135              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 136              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h"
+ 137              		.file 8 "Core/Inc/EEPROM.h"
+ARM GAS  C:\Temp\cc15eQvm.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 EEPROM.c
+  C:\Temp\cc15eQvm.s:21     .text.WriteToMemory:00000000 $t
+  C:\Temp\cc15eQvm.s:27     .text.WriteToMemory:00000000 WriteToMemory
+  C:\Temp\cc15eQvm.s:72     .text.WriteToMemory:0000002c $d
+  C:\Temp\cc15eQvm.s:77     .text.ReadFromMemory:00000000 $t
+  C:\Temp\cc15eQvm.s:83     .text.ReadFromMemory:00000000 ReadFromMemory
+  C:\Temp\cc15eQvm.s:125    .text.ReadFromMemory:00000030 $d
+
+UNDEFINED SYMBOLS
+HAL_I2C_Mem_Write
+hi2c2
+HAL_I2C_Mem_Read

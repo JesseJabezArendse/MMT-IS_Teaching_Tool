@@ -1,0 +1,608 @@
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"IMU.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/IMU.c"
+  20              		.section	.text.ReadMem,"ax",%progbits
+  21              		.align	1
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	ReadMem:
+  27              	.LVL0:
+  28              	.LFB237:
+   1:Core/Src/IMU.c **** //********************************************************************
+   2:Core/Src/IMU.c **** //*                      Mech Educational Board                      *
+   3:Core/Src/IMU.c **** //*                          IMU Library                             *
+   4:Core/Src/IMU.c **** //*==================================================================*
+   5:Core/Src/IMU.c **** //* @author:    Jesse Jabez Arendse                                  *
+   6:Core/Src/IMU.c **** //* @date:      24-10-2023                                           *
+   7:Core/Src/IMU.c **** //*==================================================================*
+   8:Core/Src/IMU.c **** 
+   9:Core/Src/IMU.c **** #include "main.h"
+  10:Core/Src/IMU.c **** #include "IMU.h"
+  11:Core/Src/IMU.c **** 
+  12:Core/Src/IMU.c **** extern TIM_HandleTypeDef htim2; //to reference htim2 from main.c
+  13:Core/Src/IMU.c **** extern I2C_HandleTypeDef hi2c1;
+  14:Core/Src/IMU.c **** 
+  15:Core/Src/IMU.c **** uint8_t checking = 0;
+  16:Core/Src/IMU.c **** 
+  17:Core/Src/IMU.c **** float accel_x = 0;
+  18:Core/Src/IMU.c **** float accel_y = 0;
+  19:Core/Src/IMU.c **** float accel_z = 0;
+  20:Core/Src/IMU.c **** float gyro_x  = 0;
+  21:Core/Src/IMU.c **** float gyro_y  = 0;
+  22:Core/Src/IMU.c **** float gyro_z  = 0;
+  23:Core/Src/IMU.c **** 
+  24:Core/Src/IMU.c **** void init_IMU(){
+  25:Core/Src/IMU.c ****     // HAL_TIM_Base_Start_IT(&htim6); //timer set to 1Hz to prevent exceeding IMU max reading rate 
+  26:Core/Src/IMU.c **** 
+  27:Core/Src/IMU.c ****     HAL_I2C_Mem_Read(&hi2c1, (IMU_ADDRESS<<1)+1,0x75,1, &checking, 1, 1000); // check
+  28:Core/Src/IMU.c ****     HAL_I2C_Mem_Write(&hi2c1, (IMU_ADDRESS<<1)+0, IMU_WAKE_ADDRESS, 1,(uint8_t*) 0x0, 1, 1000); 
+  29:Core/Src/IMU.c **** 
+  30:Core/Src/IMU.c ****     HAL_I2C_Mem_Write(&hi2c1, (IMU_ADDRESS<<1)+0, IMU_OUTPUT_RATE_ADDRESS, 1, (uint8_t*) IMU_OUTPUT
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 2
+
+
+  31:Core/Src/IMU.c ****     HAL_I2C_Mem_Write(&hi2c1, (IMU_ADDRESS<<1)+0, IMU_ACCEL_CONFIG_ADDRESS, 1,(uint8_t*) 0x0, 1, 10
+  32:Core/Src/IMU.c ****     HAL_I2C_Mem_Write(&hi2c1, (IMU_ADDRESS<<1)+0, IMU_ACCEL_CONFIG_ADDRESS, 1,(uint8_t*) 0x0, 1, 10
+  33:Core/Src/IMU.c **** }
+  34:Core/Src/IMU.c **** 
+  35:Core/Src/IMU.c **** static void WriteMem(uint8_t devAddress, uint8_t RegisterAddress, uint16_t Value)
+  36:Core/Src/IMU.c **** {
+  37:Core/Src/IMU.c **** 	uint8_t addr[2];
+  38:Core/Src/IMU.c **** 	addr[0] = (Value >> 8) & 0xff;  // upper byte
+  39:Core/Src/IMU.c **** 	addr[1] = (Value >> 0) & 0xff; // lower byte
+  40:Core/Src/IMU.c **** 	HAL_I2C_Mem_Write(&hi2c1, (devAddress<<1)+0, RegisterAddress, 1, (uint8_t*)addr, 2, HAL_MAX_DELAY)
+  41:Core/Src/IMU.c **** }
+  42:Core/Src/IMU.c **** 
+  43:Core/Src/IMU.c **** static uint16_t ReadMem(uint8_t devAddress, uint8_t RegisterAddress)
+  44:Core/Src/IMU.c **** {
+  29              		.loc 1 44 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 8
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 44 1 is_stmt 0 view .LVU1
+  34 0000 00B5     		push	{lr}
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 14, -4
+  37 0002 87B0     		sub	sp, sp, #28
+  38              		.cfi_def_cfa_offset 32
+  39 0004 0A46     		mov	r2, r1
+  45:Core/Src/IMU.c **** 	uint8_t Value[2];
+  40              		.loc 1 45 2 is_stmt 1 view .LVU2
+  46:Core/Src/IMU.c **** 
+  47:Core/Src/IMU.c **** 	HAL_I2C_Mem_Read(&hi2c1, (devAddress<<1)+1, RegisterAddress, 1, Value, 2, 1000);
+  41              		.loc 1 47 2 view .LVU3
+  42              		.loc 1 47 38 is_stmt 0 view .LVU4
+  43 0006 4000     		lsls	r0, r0, #1
+  44              	.LVL1:
+  45              		.loc 1 47 2 view .LVU5
+  46 0008 4FF47A73 		mov	r3, #1000
+  47 000c 0293     		str	r3, [sp, #8]
+  48 000e 0223     		movs	r3, #2
+  49 0010 0193     		str	r3, [sp, #4]
+  50 0012 05AB     		add	r3, sp, #20
+  51 0014 0093     		str	r3, [sp]
+  52 0016 0123     		movs	r3, #1
+  53 0018 C118     		adds	r1, r0, r3
+  54              	.LVL2:
+  55              		.loc 1 47 2 view .LVU6
+  56 001a 0648     		ldr	r0, .L3
+  57 001c FFF7FEFF 		bl	HAL_I2C_Mem_Read
+  58              	.LVL3:
+  48:Core/Src/IMU.c **** 
+  49:Core/Src/IMU.c **** 	return ((Value[0] << 8) | Value[1]);
+  59              		.loc 1 49 2 is_stmt 1 view .LVU7
+  60              		.loc 1 49 16 is_stmt 0 view .LVU8
+  61 0020 9DF81400 		ldrb	r0, [sp, #20]	@ zero_extendqisi2
+  62              		.loc 1 49 33 view .LVU9
+  63 0024 9DF81530 		ldrb	r3, [sp, #21]	@ zero_extendqisi2
+  50:Core/Src/IMU.c **** }
+  64              		.loc 1 50 1 view .LVU10
+  65 0028 43EA0020 		orr	r0, r3, r0, lsl #8
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 3
+
+
+  66 002c 07B0     		add	sp, sp, #28
+  67              		.cfi_def_cfa_offset 4
+  68              		@ sp needed
+  69 002e 5DF804FB 		ldr	pc, [sp], #4
+  70              	.L4:
+  71 0032 00BF     		.align	2
+  72              	.L3:
+  73 0034 00000000 		.word	hi2c1
+  74              		.cfi_endproc
+  75              	.LFE237:
+  77              		.section	.text.init_IMU,"ax",%progbits
+  78              		.align	1
+  79              		.global	init_IMU
+  80              		.syntax unified
+  81              		.thumb
+  82              		.thumb_func
+  84              	init_IMU:
+  85              	.LFB235:
+  24:Core/Src/IMU.c ****     // HAL_TIM_Base_Start_IT(&htim6); //timer set to 1Hz to prevent exceeding IMU max reading rate 
+  86              		.loc 1 24 16 is_stmt 1 view -0
+  87              		.cfi_startproc
+  88              		@ args = 0, pretend = 0, frame = 0
+  89              		@ frame_needed = 0, uses_anonymous_args = 0
+  90 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+  91              		.cfi_def_cfa_offset 20
+  92              		.cfi_offset 4, -20
+  93              		.cfi_offset 5, -16
+  94              		.cfi_offset 6, -12
+  95              		.cfi_offset 7, -8
+  96              		.cfi_offset 14, -4
+  97 0002 85B0     		sub	sp, sp, #20
+  98              		.cfi_def_cfa_offset 40
+  27:Core/Src/IMU.c ****     HAL_I2C_Mem_Write(&hi2c1, (IMU_ADDRESS<<1)+0, IMU_WAKE_ADDRESS, 1,(uint8_t*) 0x0, 1, 1000); 
+  99              		.loc 1 27 5 view .LVU12
+ 100 0004 1A4D     		ldr	r5, .L7
+ 101 0006 4FF47A76 		mov	r6, #1000
+ 102 000a 0296     		str	r6, [sp, #8]
+ 103 000c 0124     		movs	r4, #1
+ 104 000e 0194     		str	r4, [sp, #4]
+ 105 0010 184B     		ldr	r3, .L7+4
+ 106 0012 0093     		str	r3, [sp]
+ 107 0014 2346     		mov	r3, r4
+ 108 0016 7522     		movs	r2, #117
+ 109 0018 D321     		movs	r1, #211
+ 110 001a 2846     		mov	r0, r5
+ 111 001c FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 112              	.LVL4:
+  28:Core/Src/IMU.c **** 
+ 113              		.loc 1 28 5 view .LVU13
+ 114 0020 0296     		str	r6, [sp, #8]
+ 115 0022 0194     		str	r4, [sp, #4]
+ 116 0024 0027     		movs	r7, #0
+ 117 0026 0097     		str	r7, [sp]
+ 118 0028 2346     		mov	r3, r4
+ 119 002a 6B22     		movs	r2, #107
+ 120 002c D221     		movs	r1, #210
+ 121 002e 2846     		mov	r0, r5
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 4
+
+
+ 122 0030 FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 123              	.LVL5:
+  30:Core/Src/IMU.c ****     HAL_I2C_Mem_Write(&hi2c1, (IMU_ADDRESS<<1)+0, IMU_ACCEL_CONFIG_ADDRESS, 1,(uint8_t*) 0x0, 1, 10
+ 124              		.loc 1 30 5 view .LVU14
+ 125 0034 0296     		str	r6, [sp, #8]
+ 126 0036 0194     		str	r4, [sp, #4]
+ 127 0038 0723     		movs	r3, #7
+ 128 003a 0093     		str	r3, [sp]
+ 129 003c 2346     		mov	r3, r4
+ 130 003e 1922     		movs	r2, #25
+ 131 0040 D221     		movs	r1, #210
+ 132 0042 2846     		mov	r0, r5
+ 133 0044 FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 134              	.LVL6:
+  31:Core/Src/IMU.c ****     HAL_I2C_Mem_Write(&hi2c1, (IMU_ADDRESS<<1)+0, IMU_ACCEL_CONFIG_ADDRESS, 1,(uint8_t*) 0x0, 1, 10
+ 135              		.loc 1 31 5 view .LVU15
+ 136 0048 0296     		str	r6, [sp, #8]
+ 137 004a 0194     		str	r4, [sp, #4]
+ 138 004c 0097     		str	r7, [sp]
+ 139 004e 2346     		mov	r3, r4
+ 140 0050 1C22     		movs	r2, #28
+ 141 0052 D221     		movs	r1, #210
+ 142 0054 2846     		mov	r0, r5
+ 143 0056 FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 144              	.LVL7:
+  32:Core/Src/IMU.c **** }
+ 145              		.loc 1 32 5 view .LVU16
+ 146 005a 0296     		str	r6, [sp, #8]
+ 147 005c 0194     		str	r4, [sp, #4]
+ 148 005e 0097     		str	r7, [sp]
+ 149 0060 2346     		mov	r3, r4
+ 150 0062 1C22     		movs	r2, #28
+ 151 0064 D221     		movs	r1, #210
+ 152 0066 2846     		mov	r0, r5
+ 153 0068 FFF7FEFF 		bl	HAL_I2C_Mem_Write
+ 154              	.LVL8:
+  33:Core/Src/IMU.c **** 
+ 155              		.loc 1 33 1 is_stmt 0 view .LVU17
+ 156 006c 05B0     		add	sp, sp, #20
+ 157              		.cfi_def_cfa_offset 20
+ 158              		@ sp needed
+ 159 006e F0BD     		pop	{r4, r5, r6, r7, pc}
+ 160              	.L8:
+ 161              		.align	2
+ 162              	.L7:
+ 163 0070 00000000 		.word	hi2c1
+ 164 0074 00000000 		.word	checking
+ 165              		.cfi_endproc
+ 166              	.LFE235:
+ 168              		.section	.text.readAccel,"ax",%progbits
+ 169              		.align	1
+ 170              		.global	readAccel
+ 171              		.syntax unified
+ 172              		.thumb
+ 173              		.thumb_func
+ 175              	readAccel:
+ 176              	.LVL9:
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 5
+
+
+ 177              	.LFB238:
+  51:Core/Src/IMU.c **** 
+  52:Core/Src/IMU.c **** 
+  53:Core/Src/IMU.c **** float readAccel(short axis){
+ 178              		.loc 1 53 28 is_stmt 1 view -0
+ 179              		.cfi_startproc
+ 180              		@ args = 0, pretend = 0, frame = 0
+ 181              		@ frame_needed = 0, uses_anonymous_args = 0
+ 182              		.loc 1 53 28 is_stmt 0 view .LVU19
+ 183 0000 10B5     		push	{r4, lr}
+ 184              		.cfi_def_cfa_offset 8
+ 185              		.cfi_offset 4, -8
+ 186              		.cfi_offset 14, -4
+ 187 0002 2DED028B 		vpush.64	{d8}
+ 188              		.cfi_def_cfa_offset 16
+ 189              		.cfi_offset 80, -16
+ 190              		.cfi_offset 81, -12
+ 191 0006 0446     		mov	r4, r0
+  54:Core/Src/IMU.c ****     accel_x =  signNumber(ReadMem(IMU_ADDRESS,IMU_ACCEL_DATA_ADDRESS  ))*10/16384.0f; //because ful
+ 192              		.loc 1 54 5 is_stmt 1 view .LVU20
+ 193              		.loc 1 54 27 is_stmt 0 view .LVU21
+ 194 0008 3B21     		movs	r1, #59
+ 195 000a 6920     		movs	r0, #105
+ 196              	.LVL10:
+ 197              		.loc 1 54 27 view .LVU22
+ 198 000c FFF7FEFF 		bl	ReadMem
+ 199              	.LVL11:
+ 200              		.loc 1 54 16 view .LVU23
+ 201 0010 FFF7FEFF 		bl	signNumber
+ 202              	.LVL12:
+ 203              		.loc 1 54 73 view .LVU24
+ 204 0014 00EB8000 		add	r0, r0, r0, lsl #2
+ 205 0018 4000     		lsls	r0, r0, #1
+ 206              		.loc 1 54 76 view .LVU25
+ 207 001a 07EE900A 		vmov	s15, r0	@ int
+ 208 001e F8EEE77A 		vcvt.f32.s32	s15, s15
+ 209 0022 9FED1D8A 		vldr.32	s16, .L16
+ 210 0026 67EE887A 		vmul.f32	s15, s15, s16
+ 211              		.loc 1 54 13 view .LVU26
+ 212 002a 1C4B     		ldr	r3, .L16+4
+ 213 002c C3ED007A 		vstr.32	s15, [r3]
+  55:Core/Src/IMU.c ****     accel_y =  signNumber(ReadMem(IMU_ADDRESS,IMU_ACCEL_DATA_ADDRESS+2))*10/16384.0f;
+ 214              		.loc 1 55 5 is_stmt 1 view .LVU27
+ 215              		.loc 1 55 27 is_stmt 0 view .LVU28
+ 216 0030 3D21     		movs	r1, #61
+ 217 0032 6920     		movs	r0, #105
+ 218 0034 FFF7FEFF 		bl	ReadMem
+ 219              	.LVL13:
+ 220              		.loc 1 55 16 view .LVU29
+ 221 0038 FFF7FEFF 		bl	signNumber
+ 222              	.LVL14:
+ 223              		.loc 1 55 73 view .LVU30
+ 224 003c 00EB8000 		add	r0, r0, r0, lsl #2
+ 225 0040 4000     		lsls	r0, r0, #1
+ 226              		.loc 1 55 76 view .LVU31
+ 227 0042 07EE900A 		vmov	s15, r0	@ int
+ 228 0046 F8EEE77A 		vcvt.f32.s32	s15, s15
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 6
+
+
+ 229 004a 67EE887A 		vmul.f32	s15, s15, s16
+ 230              		.loc 1 55 13 view .LVU32
+ 231 004e 144B     		ldr	r3, .L16+8
+ 232 0050 C3ED007A 		vstr.32	s15, [r3]
+  56:Core/Src/IMU.c ****     accel_z =  signNumber(ReadMem(IMU_ADDRESS,IMU_ACCEL_DATA_ADDRESS+4))*10/16384.0f;
+ 233              		.loc 1 56 5 is_stmt 1 view .LVU33
+ 234              		.loc 1 56 27 is_stmt 0 view .LVU34
+ 235 0054 3F21     		movs	r1, #63
+ 236 0056 6920     		movs	r0, #105
+ 237 0058 FFF7FEFF 		bl	ReadMem
+ 238              	.LVL15:
+ 239              		.loc 1 56 16 view .LVU35
+ 240 005c FFF7FEFF 		bl	signNumber
+ 241              	.LVL16:
+ 242              		.loc 1 56 73 view .LVU36
+ 243 0060 00EB8000 		add	r0, r0, r0, lsl #2
+ 244 0064 4300     		lsls	r3, r0, #1
+ 245 0066 00EE103A 		vmov	s0, r3	@ int
+ 246              		.loc 1 56 76 view .LVU37
+ 247 006a B8EEC00A 		vcvt.f32.s32	s0, s0
+ 248 006e 20EE080A 		vmul.f32	s0, s0, s16
+ 249              		.loc 1 56 13 view .LVU38
+ 250 0072 0C4B     		ldr	r3, .L16+12
+ 251 0074 83ED000A 		vstr.32	s0, [r3]
+  57:Core/Src/IMU.c **** 
+  58:Core/Src/IMU.c ****     if (axis == IMU_X_AXIS){
+ 252              		.loc 1 58 5 is_stmt 1 view .LVU39
+ 253              		.loc 1 58 8 is_stmt 0 view .LVU40
+ 254 0078 2CB1     		cbz	r4, .L14
+  59:Core/Src/IMU.c ****         return accel_x;
+  60:Core/Src/IMU.c ****     }
+  61:Core/Src/IMU.c ****     if (axis == IMU_Y_AXIS){
+ 255              		.loc 1 61 5 is_stmt 1 view .LVU41
+ 256              		.loc 1 61 8 is_stmt 0 view .LVU42
+ 257 007a 012C     		cmp	r4, #1
+ 258 007c 07D0     		beq	.L15
+  62:Core/Src/IMU.c ****         return accel_y;
+  63:Core/Src/IMU.c ****     }
+  64:Core/Src/IMU.c ****     if (axis == IMU_Z_AXIS){
+ 259              		.loc 1 64 5 is_stmt 1 view .LVU43
+ 260              		.loc 1 64 8 is_stmt 0 view .LVU44
+ 261 007e 022C     		cmp	r4, #2
+ 262              	.L9:
+  65:Core/Src/IMU.c ****         return accel_z;
+  66:Core/Src/IMU.c ****     }
+  67:Core/Src/IMU.c **** }
+ 263              		.loc 1 67 1 view .LVU45
+ 264 0080 BDEC028B 		vldm	sp!, {d8}
+ 265              		.cfi_remember_state
+ 266              		.cfi_restore 80
+ 267              		.cfi_restore 81
+ 268              		.cfi_def_cfa_offset 8
+ 269 0084 10BD     		pop	{r4, pc}
+ 270              	.L14:
+ 271              		.cfi_restore_state
+  59:Core/Src/IMU.c ****     }
+ 272              		.loc 1 59 9 is_stmt 1 view .LVU46
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 7
+
+
+  59:Core/Src/IMU.c ****     }
+ 273              		.loc 1 59 16 is_stmt 0 view .LVU47
+ 274 0086 054B     		ldr	r3, .L16+4
+ 275 0088 93ED000A 		vldr.32	s0, [r3]
+ 276 008c F8E7     		b	.L9
+ 277              	.L15:
+  62:Core/Src/IMU.c ****         return accel_y;
+ 278              		.loc 1 62 9 is_stmt 1 view .LVU48
+  62:Core/Src/IMU.c ****         return accel_y;
+ 279              		.loc 1 62 16 is_stmt 0 view .LVU49
+ 280 008e 044B     		ldr	r3, .L16+8
+ 281 0090 93ED000A 		vldr.32	s0, [r3]
+ 282 0094 F4E7     		b	.L9
+ 283              	.L17:
+ 284 0096 00BF     		.align	2
+ 285              	.L16:
+ 286 0098 00008038 		.word	947912704
+ 287 009c 00000000 		.word	accel_x
+ 288 00a0 00000000 		.word	accel_y
+ 289 00a4 00000000 		.word	accel_z
+ 290              		.cfi_endproc
+ 291              	.LFE238:
+ 293              		.section	.text.readGyro,"ax",%progbits
+ 294              		.align	1
+ 295              		.global	readGyro
+ 296              		.syntax unified
+ 297              		.thumb
+ 298              		.thumb_func
+ 300              	readGyro:
+ 301              	.LVL17:
+ 302              	.LFB239:
+  68:Core/Src/IMU.c **** 
+  69:Core/Src/IMU.c **** float readGyro(short axis){
+ 303              		.loc 1 69 27 is_stmt 1 view -0
+ 304              		.cfi_startproc
+ 305              		@ args = 0, pretend = 0, frame = 0
+ 306              		@ frame_needed = 0, uses_anonymous_args = 0
+ 307              		.loc 1 69 27 is_stmt 0 view .LVU51
+ 308 0000 10B5     		push	{r4, lr}
+ 309              		.cfi_def_cfa_offset 8
+ 310              		.cfi_offset 4, -8
+ 311              		.cfi_offset 14, -4
+ 312 0002 2DED028B 		vpush.64	{d8}
+ 313              		.cfi_def_cfa_offset 16
+ 314              		.cfi_offset 80, -16
+ 315              		.cfi_offset 81, -12
+ 316 0006 0446     		mov	r4, r0
+  70:Core/Src/IMU.c ****     gyro_x = signNumber(ReadMem(IMU_ADDRESS,IMU_GYRO_DATA_ADDRESS  ))/131.0f; //because full range 
+ 317              		.loc 1 70 5 is_stmt 1 view .LVU52
+ 318              		.loc 1 70 25 is_stmt 0 view .LVU53
+ 319 0008 4321     		movs	r1, #67
+ 320 000a 6920     		movs	r0, #105
+ 321              	.LVL18:
+ 322              		.loc 1 70 25 view .LVU54
+ 323 000c FFF7FEFF 		bl	ReadMem
+ 324              	.LVL19:
+ 325              		.loc 1 70 14 view .LVU55
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 8
+
+
+ 326 0010 FFF7FEFF 		bl	signNumber
+ 327              	.LVL20:
+ 328 0014 07EE900A 		vmov	s15, r0	@ int
+ 329              		.loc 1 70 70 view .LVU56
+ 330 0018 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 331 001c 9FED198A 		vldr.32	s16, .L25
+ 332 0020 87EE887A 		vdiv.f32	s14, s15, s16
+ 333              		.loc 1 70 12 view .LVU57
+ 334 0024 184B     		ldr	r3, .L25+4
+ 335 0026 83ED007A 		vstr.32	s14, [r3]
+  71:Core/Src/IMU.c ****     gyro_y = signNumber(ReadMem(IMU_ADDRESS,IMU_GYRO_DATA_ADDRESS+2))/131.0f;
+ 336              		.loc 1 71 5 is_stmt 1 view .LVU58
+ 337              		.loc 1 71 25 is_stmt 0 view .LVU59
+ 338 002a 4521     		movs	r1, #69
+ 339 002c 6920     		movs	r0, #105
+ 340 002e FFF7FEFF 		bl	ReadMem
+ 341              	.LVL21:
+ 342              		.loc 1 71 14 view .LVU60
+ 343 0032 FFF7FEFF 		bl	signNumber
+ 344              	.LVL22:
+ 345 0036 07EE900A 		vmov	s15, r0	@ int
+ 346              		.loc 1 71 70 view .LVU61
+ 347 003a F8EEE77A 		vcvt.f32.s32	s15, s15
+ 348 003e 87EE887A 		vdiv.f32	s14, s15, s16
+ 349              		.loc 1 71 12 view .LVU62
+ 350 0042 124B     		ldr	r3, .L25+8
+ 351 0044 83ED007A 		vstr.32	s14, [r3]
+  72:Core/Src/IMU.c ****     gyro_z = signNumber(ReadMem(IMU_ADDRESS,IMU_GYRO_DATA_ADDRESS+4))/131.0f;
+ 352              		.loc 1 72 5 is_stmt 1 view .LVU63
+ 353              		.loc 1 72 25 is_stmt 0 view .LVU64
+ 354 0048 4721     		movs	r1, #71
+ 355 004a 6920     		movs	r0, #105
+ 356 004c FFF7FEFF 		bl	ReadMem
+ 357              	.LVL23:
+ 358              		.loc 1 72 14 view .LVU65
+ 359 0050 FFF7FEFF 		bl	signNumber
+ 360              	.LVL24:
+ 361 0054 07EE900A 		vmov	s15, r0	@ int
+ 362              		.loc 1 72 70 view .LVU66
+ 363 0058 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 364 005c 87EE880A 		vdiv.f32	s0, s15, s16
+ 365              		.loc 1 72 12 view .LVU67
+ 366 0060 0B4B     		ldr	r3, .L25+12
+ 367 0062 83ED000A 		vstr.32	s0, [r3]
+  73:Core/Src/IMU.c **** 
+  74:Core/Src/IMU.c ****     if (axis == IMU_X_AXIS){
+ 368              		.loc 1 74 5 is_stmt 1 view .LVU68
+ 369              		.loc 1 74 8 is_stmt 0 view .LVU69
+ 370 0066 2CB1     		cbz	r4, .L23
+  75:Core/Src/IMU.c ****         return gyro_x;
+  76:Core/Src/IMU.c ****     }
+  77:Core/Src/IMU.c ****     if (axis == IMU_Y_AXIS){
+ 371              		.loc 1 77 5 is_stmt 1 view .LVU70
+ 372              		.loc 1 77 8 is_stmt 0 view .LVU71
+ 373 0068 012C     		cmp	r4, #1
+ 374 006a 07D0     		beq	.L24
+  78:Core/Src/IMU.c ****         return gyro_y;
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 9
+
+
+  79:Core/Src/IMU.c ****     }
+  80:Core/Src/IMU.c ****     if (axis == IMU_Z_AXIS){
+ 375              		.loc 1 80 5 is_stmt 1 view .LVU72
+ 376              		.loc 1 80 8 is_stmt 0 view .LVU73
+ 377 006c 022C     		cmp	r4, #2
+ 378              	.L18:
+  81:Core/Src/IMU.c ****         return gyro_z;
+  82:Core/Src/IMU.c ****     }
+  83:Core/Src/IMU.c **** }
+ 379              		.loc 1 83 1 view .LVU74
+ 380 006e BDEC028B 		vldm	sp!, {d8}
+ 381              		.cfi_remember_state
+ 382              		.cfi_restore 80
+ 383              		.cfi_restore 81
+ 384              		.cfi_def_cfa_offset 8
+ 385 0072 10BD     		pop	{r4, pc}
+ 386              	.L23:
+ 387              		.cfi_restore_state
+  75:Core/Src/IMU.c ****     }
+ 388              		.loc 1 75 9 is_stmt 1 view .LVU75
+  75:Core/Src/IMU.c ****     }
+ 389              		.loc 1 75 16 is_stmt 0 view .LVU76
+ 390 0074 044B     		ldr	r3, .L25+4
+ 391 0076 93ED000A 		vldr.32	s0, [r3]
+ 392 007a F8E7     		b	.L18
+ 393              	.L24:
+  78:Core/Src/IMU.c ****         return gyro_y;
+ 394              		.loc 1 78 9 is_stmt 1 view .LVU77
+  78:Core/Src/IMU.c ****         return gyro_y;
+ 395              		.loc 1 78 16 is_stmt 0 view .LVU78
+ 396 007c 034B     		ldr	r3, .L25+8
+ 397 007e 93ED000A 		vldr.32	s0, [r3]
+ 398 0082 F4E7     		b	.L18
+ 399              	.L26:
+ 400              		.align	2
+ 401              	.L25:
+ 402 0084 00000343 		.word	1124270080
+ 403 0088 00000000 		.word	gyro_x
+ 404 008c 00000000 		.word	gyro_y
+ 405 0090 00000000 		.word	gyro_z
+ 406              		.cfi_endproc
+ 407              	.LFE239:
+ 409              		.global	gyro_z
+ 410              		.section	.bss.gyro_z,"aw",%nobits
+ 411              		.align	2
+ 414              	gyro_z:
+ 415 0000 00000000 		.space	4
+ 416              		.global	gyro_y
+ 417              		.section	.bss.gyro_y,"aw",%nobits
+ 418              		.align	2
+ 421              	gyro_y:
+ 422 0000 00000000 		.space	4
+ 423              		.global	gyro_x
+ 424              		.section	.bss.gyro_x,"aw",%nobits
+ 425              		.align	2
+ 428              	gyro_x:
+ 429 0000 00000000 		.space	4
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 10
+
+
+ 430              		.global	accel_z
+ 431              		.section	.bss.accel_z,"aw",%nobits
+ 432              		.align	2
+ 435              	accel_z:
+ 436 0000 00000000 		.space	4
+ 437              		.global	accel_y
+ 438              		.section	.bss.accel_y,"aw",%nobits
+ 439              		.align	2
+ 442              	accel_y:
+ 443 0000 00000000 		.space	4
+ 444              		.global	accel_x
+ 445              		.section	.bss.accel_x,"aw",%nobits
+ 446              		.align	2
+ 449              	accel_x:
+ 450 0000 00000000 		.space	4
+ 451              		.global	checking
+ 452              		.section	.bss.checking,"aw",%nobits
+ 455              	checking:
+ 456 0000 00       		.space	1
+ 457              		.text
+ 458              	.Letext0:
+ 459              		.file 2 "c:\\users\\jesse arendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-vsco
+ 460              		.file 3 "c:\\users\\jesse arendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-vsco
+ 461              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 462              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 463              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 464              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h"
+ 465              		.file 8 "Core/Inc/IMU.h"
+ARM GAS  C:\Temp\cc9jYbzs.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 IMU.c
+  C:\Temp\cc9jYbzs.s:21     .text.ReadMem:00000000 $t
+  C:\Temp\cc9jYbzs.s:26     .text.ReadMem:00000000 ReadMem
+  C:\Temp\cc9jYbzs.s:73     .text.ReadMem:00000034 $d
+  C:\Temp\cc9jYbzs.s:78     .text.init_IMU:00000000 $t
+  C:\Temp\cc9jYbzs.s:84     .text.init_IMU:00000000 init_IMU
+  C:\Temp\cc9jYbzs.s:163    .text.init_IMU:00000070 $d
+  C:\Temp\cc9jYbzs.s:455    .bss.checking:00000000 checking
+  C:\Temp\cc9jYbzs.s:169    .text.readAccel:00000000 $t
+  C:\Temp\cc9jYbzs.s:175    .text.readAccel:00000000 readAccel
+  C:\Temp\cc9jYbzs.s:286    .text.readAccel:00000098 $d
+  C:\Temp\cc9jYbzs.s:449    .bss.accel_x:00000000 accel_x
+  C:\Temp\cc9jYbzs.s:442    .bss.accel_y:00000000 accel_y
+  C:\Temp\cc9jYbzs.s:435    .bss.accel_z:00000000 accel_z
+  C:\Temp\cc9jYbzs.s:294    .text.readGyro:00000000 $t
+  C:\Temp\cc9jYbzs.s:300    .text.readGyro:00000000 readGyro
+  C:\Temp\cc9jYbzs.s:402    .text.readGyro:00000084 $d
+  C:\Temp\cc9jYbzs.s:428    .bss.gyro_x:00000000 gyro_x
+  C:\Temp\cc9jYbzs.s:421    .bss.gyro_y:00000000 gyro_y
+  C:\Temp\cc9jYbzs.s:414    .bss.gyro_z:00000000 gyro_z
+  C:\Temp\cc9jYbzs.s:411    .bss.gyro_z:00000000 $d
+  C:\Temp\cc9jYbzs.s:418    .bss.gyro_y:00000000 $d
+  C:\Temp\cc9jYbzs.s:425    .bss.gyro_x:00000000 $d
+  C:\Temp\cc9jYbzs.s:432    .bss.accel_z:00000000 $d
+  C:\Temp\cc9jYbzs.s:439    .bss.accel_y:00000000 $d
+  C:\Temp\cc9jYbzs.s:446    .bss.accel_x:00000000 $d
+  C:\Temp\cc9jYbzs.s:456    .bss.checking:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_I2C_Mem_Read
+hi2c1
+HAL_I2C_Mem_Write
+signNumber

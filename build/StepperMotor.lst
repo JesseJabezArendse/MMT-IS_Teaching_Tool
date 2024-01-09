@@ -1,0 +1,1438 @@
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"StepperMotor.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/StepperMotor.c"
+  20              		.section	.text.HalfModeSequence,"ax",%progbits
+  21              		.align	1
+  22              		.global	HalfModeSequence
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	HalfModeSequence:
+  28              	.LFB236:
+   1:Core/Src/StepperMotor.c **** //********************************************************************
+   2:Core/Src/StepperMotor.c **** //*                      Mech Educational Board                      *
+   3:Core/Src/StepperMotor.c **** //*                     Current Monitors Library                     *
+   4:Core/Src/StepperMotor.c **** //*==================================================================*
+   5:Core/Src/StepperMotor.c **** //* @author:    Jesse Jabez Arendse                                  *
+   6:Core/Src/StepperMotor.c **** //* @date:      06-11-2023                                           *
+   7:Core/Src/StepperMotor.c **** //*==================================================================*
+   8:Core/Src/StepperMotor.c **** 
+   9:Core/Src/StepperMotor.c **** #include "main.h"
+  10:Core/Src/StepperMotor.c **** #include "StepperMotor.h"
+  11:Core/Src/StepperMotor.c **** 
+  12:Core/Src/StepperMotor.c **** extern TIM_HandleTypeDef htim4;
+  13:Core/Src/StepperMotor.c **** 
+  14:Core/Src/StepperMotor.c **** uint8_t stepperIndex = 0;
+  15:Core/Src/StepperMotor.c **** uint8_t tempARR = 0;
+  16:Core/Src/StepperMotor.c **** short withLEDs = 0;
+  17:Core/Src/StepperMotor.c **** 
+  18:Core/Src/StepperMotor.c **** int fullRevolution = 4096;
+  19:Core/Src/StepperMotor.c **** 
+  20:Core/Src/StepperMotor.c **** void setStepperSpeed(uint16_t millirRPM){
+  21:Core/Src/StepperMotor.c ****     if (millirRPM == 0){
+  22:Core/Src/StepperMotor.c ****         HAL_TIM_Base_Stop_IT(&htim4);
+  23:Core/Src/StepperMotor.c ****     }
+  24:Core/Src/StepperMotor.c ****     else if (millirRPM >= 8400){
+  25:Core/Src/StepperMotor.c ****         millirRPM = 8400;
+  26:Core/Src/StepperMotor.c ****     }
+  27:Core/Src/StepperMotor.c **** 
+  28:Core/Src/StepperMotor.c ****     tempARR = 84000000/fullRevolution; 
+  29:Core/Src/StepperMotor.c ****     TIM4->ARR = tempARR*1000/millirRPM;
+  30:Core/Src/StepperMotor.c **** 
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 2
+
+
+  31:Core/Src/StepperMotor.c **** 
+  32:Core/Src/StepperMotor.c **** }
+  33:Core/Src/StepperMotor.c **** 
+  34:Core/Src/StepperMotor.c **** 
+  35:Core/Src/StepperMotor.c **** void HalfModeSequence(void){
+  29              		.loc 1 35 28 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  36:Core/Src/StepperMotor.c ****     GPIOD -> ODR = 0;
+  37              		.loc 1 36 5 view .LVU1
+  38              		.loc 1 36 18 is_stmt 0 view .LVU2
+  39 0002 4E4B     		ldr	r3, .L28
+  40 0004 0022     		movs	r2, #0
+  41 0006 5A61     		str	r2, [r3, #20]
+  37:Core/Src/StepperMotor.c ****     switch (stepperIndex)
+  42              		.loc 1 37 5 is_stmt 1 view .LVU3
+  43 0008 4D4B     		ldr	r3, .L28+4
+  44 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  45 000c 072B     		cmp	r3, #7
+  46 000e 12D8     		bhi	.L2
+  47 0010 DFE803F0 		tbb	[pc, r3]
+  48              	.L4:
+  49 0014 04       		.byte	(.L11-.L4)/2
+  50 0015 1E       		.byte	(.L10-.L4)/2
+  51 0016 25       		.byte	(.L9-.L4)/2
+  52 0017 2C       		.byte	(.L8-.L4)/2
+  53 0018 33       		.byte	(.L7-.L4)/2
+  54 0019 3A       		.byte	(.L6-.L4)/2
+  55 001a 41       		.byte	(.L5-.L4)/2
+  56 001b 48       		.byte	(.L3-.L4)/2
+  57              		.p2align 1
+  58              	.L11:
+  38:Core/Src/StepperMotor.c ****     {
+  39:Core/Src/StepperMotor.c ****     case 0:
+  40:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_0_GPIO_Port,Stepper_0_Pin,1);
+  59              		.loc 1 40 9 view .LVU4
+  60 001c 474C     		ldr	r4, .L28
+  61 001e 0122     		movs	r2, #1
+  62 0020 4FF48051 		mov	r1, #4096
+  63 0024 2046     		mov	r0, r4
+  64 0026 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  65              	.LVL0:
+  41:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_3_GPIO_Port,Stepper_3_Pin,0);
+  66              		.loc 1 41 9 view .LVU5
+  67 002a 0022     		movs	r2, #0
+  68 002c 4FF40041 		mov	r1, #32768
+  69 0030 2046     		mov	r0, r4
+  70 0032 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  71              	.LVL1:
+  42:Core/Src/StepperMotor.c ****         break;
+  72              		.loc 1 42 9 view .LVU6
+  73              	.L2:
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 3
+
+
+  43:Core/Src/StepperMotor.c ****     case 1:
+  44:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_1_GPIO_Port,Stepper_1_Pin,1);
+  45:Core/Src/StepperMotor.c ****         break;
+  46:Core/Src/StepperMotor.c ****     case 2:
+  47:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_0_GPIO_Port,Stepper_0_Pin,0);
+  48:Core/Src/StepperMotor.c ****         break;
+  49:Core/Src/StepperMotor.c ****     case 3:
+  50:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_2_GPIO_Port,Stepper_2_Pin,1);
+  51:Core/Src/StepperMotor.c ****         break;
+  52:Core/Src/StepperMotor.c ****     case 4:
+  53:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_1_GPIO_Port,Stepper_1_Pin,0);
+  54:Core/Src/StepperMotor.c ****         break;
+  55:Core/Src/StepperMotor.c ****     case 5:
+  56:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_3_GPIO_Port,Stepper_3_Pin,1);
+  57:Core/Src/StepperMotor.c ****         break;
+  58:Core/Src/StepperMotor.c ****     case 6:
+  59:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_2_GPIO_Port,Stepper_2_Pin,0);
+  60:Core/Src/StepperMotor.c ****         break;
+  61:Core/Src/StepperMotor.c ****     case 7:
+  62:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_0_GPIO_Port,Stepper_0_Pin,1);
+  63:Core/Src/StepperMotor.c ****         break;
+  64:Core/Src/StepperMotor.c ****     
+  65:Core/Src/StepperMotor.c ****     default:
+  66:Core/Src/StepperMotor.c ****         break;
+  67:Core/Src/StepperMotor.c ****     }
+  68:Core/Src/StepperMotor.c **** 
+  69:Core/Src/StepperMotor.c **** if (withLEDs == 1){
+  74              		.loc 1 69 1 view .LVU7
+  75              		.loc 1 69 14 is_stmt 0 view .LVU8
+  76 0036 434B     		ldr	r3, .L28+8
+  77 0038 B3F90030 		ldrsh	r3, [r3]
+  78              		.loc 1 69 4 view .LVU9
+  79 003c 012B     		cmp	r3, #1
+  80 003e 38D0     		beq	.L26
+  81              	.L12:
+  70:Core/Src/StepperMotor.c ****         switch (stepperIndex)
+  71:Core/Src/StepperMotor.c ****     {
+  72:Core/Src/StepperMotor.c ****     case 0:
+  73:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,1);
+  74:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,0);
+  75:Core/Src/StepperMotor.c ****         break;
+  76:Core/Src/StepperMotor.c ****     case 1:
+  77:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED1_Pin,1);
+  78:Core/Src/StepperMotor.c ****         break;
+  79:Core/Src/StepperMotor.c ****     case 2:
+  80:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,0);
+  81:Core/Src/StepperMotor.c ****         break;
+  82:Core/Src/StepperMotor.c ****     case 3:
+  83:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED2_Pin,1);
+  84:Core/Src/StepperMotor.c ****         break;
+  85:Core/Src/StepperMotor.c ****     case 4:
+  86:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED1_Pin,0);
+  87:Core/Src/StepperMotor.c ****         break;
+  88:Core/Src/StepperMotor.c ****     case 5:
+  89:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,1);
+  90:Core/Src/StepperMotor.c ****         break;
+  91:Core/Src/StepperMotor.c ****     case 6:
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 4
+
+
+  92:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED2_Pin,0);
+  93:Core/Src/StepperMotor.c ****         break;
+  94:Core/Src/StepperMotor.c ****     case 7:
+  95:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,1);
+  96:Core/Src/StepperMotor.c ****         break;
+  97:Core/Src/StepperMotor.c ****     
+  98:Core/Src/StepperMotor.c ****     default:
+  99:Core/Src/StepperMotor.c ****         break;
+ 100:Core/Src/StepperMotor.c ****     }
+ 101:Core/Src/StepperMotor.c **** }
+ 102:Core/Src/StepperMotor.c **** 
+ 103:Core/Src/StepperMotor.c ****     stepperIndex++;
+  82              		.loc 1 103 5 is_stmt 1 view .LVU10
+  83              		.loc 1 103 17 is_stmt 0 view .LVU11
+  84 0040 3F4A     		ldr	r2, .L28+4
+  85 0042 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  86 0044 0133     		adds	r3, r3, #1
+  87 0046 DBB2     		uxtb	r3, r3
+  88 0048 1370     		strb	r3, [r2]
+ 104:Core/Src/StepperMotor.c ****     if (stepperIndex == 8){
+  89              		.loc 1 104 5 is_stmt 1 view .LVU12
+  90              		.loc 1 104 8 is_stmt 0 view .LVU13
+  91 004a 082B     		cmp	r3, #8
+  92 004c 71D0     		beq	.L27
+  93              	.L1:
+ 105:Core/Src/StepperMotor.c ****         stepperIndex = 0;
+ 106:Core/Src/StepperMotor.c ****     }
+ 107:Core/Src/StepperMotor.c **** }
+  94              		.loc 1 107 1 view .LVU14
+  95 004e 10BD     		pop	{r4, pc}
+  96              	.L10:
+  44:Core/Src/StepperMotor.c ****         break;
+  97              		.loc 1 44 9 is_stmt 1 view .LVU15
+  98 0050 0122     		movs	r2, #1
+  99 0052 4FF48041 		mov	r1, #16384
+ 100 0056 3948     		ldr	r0, .L28
+ 101 0058 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 102              	.LVL2:
+  45:Core/Src/StepperMotor.c ****     case 2:
+ 103              		.loc 1 45 9 view .LVU16
+ 104 005c EBE7     		b	.L2
+ 105              	.L9:
+  47:Core/Src/StepperMotor.c ****         break;
+ 106              		.loc 1 47 9 view .LVU17
+ 107 005e 0022     		movs	r2, #0
+ 108 0060 4FF48051 		mov	r1, #4096
+ 109 0064 3548     		ldr	r0, .L28
+ 110 0066 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 111              	.LVL3:
+  48:Core/Src/StepperMotor.c ****     case 3:
+ 112              		.loc 1 48 9 view .LVU18
+ 113 006a E4E7     		b	.L2
+ 114              	.L8:
+  50:Core/Src/StepperMotor.c ****         break;
+ 115              		.loc 1 50 9 view .LVU19
+ 116 006c 0122     		movs	r2, #1
+ 117 006e 4FF40051 		mov	r1, #8192
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 5
+
+
+ 118 0072 3248     		ldr	r0, .L28
+ 119 0074 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 120              	.LVL4:
+  51:Core/Src/StepperMotor.c ****     case 4:
+ 121              		.loc 1 51 9 view .LVU20
+ 122 0078 DDE7     		b	.L2
+ 123              	.L7:
+  53:Core/Src/StepperMotor.c ****         break;
+ 124              		.loc 1 53 9 view .LVU21
+ 125 007a 0022     		movs	r2, #0
+ 126 007c 4FF48041 		mov	r1, #16384
+ 127 0080 2E48     		ldr	r0, .L28
+ 128 0082 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 129              	.LVL5:
+  54:Core/Src/StepperMotor.c ****     case 5:
+ 130              		.loc 1 54 9 view .LVU22
+ 131 0086 D6E7     		b	.L2
+ 132              	.L6:
+  56:Core/Src/StepperMotor.c ****         break;
+ 133              		.loc 1 56 9 view .LVU23
+ 134 0088 0122     		movs	r2, #1
+ 135 008a 4FF40041 		mov	r1, #32768
+ 136 008e 2B48     		ldr	r0, .L28
+ 137 0090 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 138              	.LVL6:
+  57:Core/Src/StepperMotor.c ****     case 6:
+ 139              		.loc 1 57 9 view .LVU24
+ 140 0094 CFE7     		b	.L2
+ 141              	.L5:
+  59:Core/Src/StepperMotor.c ****         break;
+ 142              		.loc 1 59 9 view .LVU25
+ 143 0096 0022     		movs	r2, #0
+ 144 0098 4FF40051 		mov	r1, #8192
+ 145 009c 2748     		ldr	r0, .L28
+ 146 009e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 147              	.LVL7:
+  60:Core/Src/StepperMotor.c ****     case 7:
+ 148              		.loc 1 60 9 view .LVU26
+ 149 00a2 C8E7     		b	.L2
+ 150              	.L3:
+  62:Core/Src/StepperMotor.c ****         break;
+ 151              		.loc 1 62 9 view .LVU27
+ 152 00a4 0122     		movs	r2, #1
+ 153 00a6 4FF48051 		mov	r1, #4096
+ 154 00aa 2448     		ldr	r0, .L28
+ 155 00ac FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 156              	.LVL8:
+  63:Core/Src/StepperMotor.c ****     
+ 157              		.loc 1 63 9 view .LVU28
+ 158 00b0 C1E7     		b	.L2
+ 159              	.L26:
+  70:Core/Src/StepperMotor.c ****     {
+ 160              		.loc 1 70 9 view .LVU29
+ 161 00b2 234B     		ldr	r3, .L28+4
+ 162 00b4 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 163 00b6 072B     		cmp	r3, #7
+ 164 00b8 C2D8     		bhi	.L12
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 6
+
+
+ 165 00ba DFE803F0 		tbb	[pc, r3]
+ 166              	.L14:
+ 167 00be 04       		.byte	(.L21-.L14)/2
+ 168 00bf 10       		.byte	(.L20-.L14)/2
+ 169 00c0 16       		.byte	(.L19-.L14)/2
+ 170 00c1 1C       		.byte	(.L18-.L14)/2
+ 171 00c2 22       		.byte	(.L17-.L14)/2
+ 172 00c3 28       		.byte	(.L16-.L14)/2
+ 173 00c4 2E       		.byte	(.L15-.L14)/2
+ 174 00c5 34       		.byte	(.L13-.L14)/2
+ 175              		.p2align 1
+ 176              	.L21:
+  73:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,0);
+ 177              		.loc 1 73 9 view .LVU30
+ 178 00c6 204C     		ldr	r4, .L28+12
+ 179 00c8 0122     		movs	r2, #1
+ 180 00ca 1146     		mov	r1, r2
+ 181 00cc 2046     		mov	r0, r4
+ 182 00ce FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 183              	.LVL9:
+  74:Core/Src/StepperMotor.c ****         break;
+ 184              		.loc 1 74 9 view .LVU31
+ 185 00d2 0022     		movs	r2, #0
+ 186 00d4 0821     		movs	r1, #8
+ 187 00d6 2046     		mov	r0, r4
+ 188 00d8 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 189              	.LVL10:
+  75:Core/Src/StepperMotor.c ****     case 1:
+ 190              		.loc 1 75 9 view .LVU32
+ 191 00dc B0E7     		b	.L12
+ 192              	.L20:
+  77:Core/Src/StepperMotor.c ****         break;
+ 193              		.loc 1 77 9 view .LVU33
+ 194 00de 0122     		movs	r2, #1
+ 195 00e0 0221     		movs	r1, #2
+ 196 00e2 1948     		ldr	r0, .L28+12
+ 197 00e4 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 198              	.LVL11:
+  78:Core/Src/StepperMotor.c ****     case 2:
+ 199              		.loc 1 78 9 view .LVU34
+ 200 00e8 AAE7     		b	.L12
+ 201              	.L19:
+  80:Core/Src/StepperMotor.c ****         break;
+ 202              		.loc 1 80 9 view .LVU35
+ 203 00ea 0022     		movs	r2, #0
+ 204 00ec 0121     		movs	r1, #1
+ 205 00ee 1648     		ldr	r0, .L28+12
+ 206 00f0 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 207              	.LVL12:
+  81:Core/Src/StepperMotor.c ****     case 3:
+ 208              		.loc 1 81 9 view .LVU36
+ 209 00f4 A4E7     		b	.L12
+ 210              	.L18:
+  83:Core/Src/StepperMotor.c ****         break;
+ 211              		.loc 1 83 9 view .LVU37
+ 212 00f6 0122     		movs	r2, #1
+ 213 00f8 0421     		movs	r1, #4
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 7
+
+
+ 214 00fa 1348     		ldr	r0, .L28+12
+ 215 00fc FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 216              	.LVL13:
+  84:Core/Src/StepperMotor.c ****     case 4:
+ 217              		.loc 1 84 9 view .LVU38
+ 218 0100 9EE7     		b	.L12
+ 219              	.L17:
+  86:Core/Src/StepperMotor.c ****         break;
+ 220              		.loc 1 86 9 view .LVU39
+ 221 0102 0022     		movs	r2, #0
+ 222 0104 0221     		movs	r1, #2
+ 223 0106 1048     		ldr	r0, .L28+12
+ 224 0108 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 225              	.LVL14:
+  87:Core/Src/StepperMotor.c ****     case 5:
+ 226              		.loc 1 87 9 view .LVU40
+ 227 010c 98E7     		b	.L12
+ 228              	.L16:
+  89:Core/Src/StepperMotor.c ****         break;
+ 229              		.loc 1 89 9 view .LVU41
+ 230 010e 0122     		movs	r2, #1
+ 231 0110 0821     		movs	r1, #8
+ 232 0112 0D48     		ldr	r0, .L28+12
+ 233 0114 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 234              	.LVL15:
+  90:Core/Src/StepperMotor.c ****     case 6:
+ 235              		.loc 1 90 9 view .LVU42
+ 236 0118 92E7     		b	.L12
+ 237              	.L15:
+  92:Core/Src/StepperMotor.c ****         break;
+ 238              		.loc 1 92 9 view .LVU43
+ 239 011a 0022     		movs	r2, #0
+ 240 011c 0421     		movs	r1, #4
+ 241 011e 0A48     		ldr	r0, .L28+12
+ 242 0120 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 243              	.LVL16:
+  93:Core/Src/StepperMotor.c ****     case 7:
+ 244              		.loc 1 93 9 view .LVU44
+ 245 0124 8CE7     		b	.L12
+ 246              	.L13:
+  95:Core/Src/StepperMotor.c ****         break;
+ 247              		.loc 1 95 9 view .LVU45
+ 248 0126 0122     		movs	r2, #1
+ 249 0128 1146     		mov	r1, r2
+ 250 012a 0748     		ldr	r0, .L28+12
+ 251 012c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 252              	.LVL17:
+  96:Core/Src/StepperMotor.c ****     
+ 253              		.loc 1 96 9 view .LVU46
+ 254 0130 86E7     		b	.L12
+ 255              	.L27:
+ 105:Core/Src/StepperMotor.c ****     }
+ 256              		.loc 1 105 9 view .LVU47
+ 105:Core/Src/StepperMotor.c ****     }
+ 257              		.loc 1 105 22 is_stmt 0 view .LVU48
+ 258 0132 1346     		mov	r3, r2
+ 259 0134 0022     		movs	r2, #0
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 8
+
+
+ 260 0136 1A70     		strb	r2, [r3]
+ 261              		.loc 1 107 1 view .LVU49
+ 262 0138 89E7     		b	.L1
+ 263              	.L29:
+ 264 013a 00BF     		.align	2
+ 265              	.L28:
+ 266 013c 000C0240 		.word	1073875968
+ 267 0140 00000000 		.word	stepperIndex
+ 268 0144 00000000 		.word	withLEDs
+ 269 0148 00040240 		.word	1073873920
+ 270              		.cfi_endproc
+ 271              	.LFE236:
+ 273              		.section	.text.WaveModeSequence,"ax",%progbits
+ 274              		.align	1
+ 275              		.global	WaveModeSequence
+ 276              		.syntax unified
+ 277              		.thumb
+ 278              		.thumb_func
+ 280              	WaveModeSequence:
+ 281              	.LFB237:
+ 108:Core/Src/StepperMotor.c **** 
+ 109:Core/Src/StepperMotor.c **** void WaveModeSequence(void){
+ 282              		.loc 1 109 28 is_stmt 1 view -0
+ 283              		.cfi_startproc
+ 284              		@ args = 0, pretend = 0, frame = 0
+ 285              		@ frame_needed = 0, uses_anonymous_args = 0
+ 286 0000 10B5     		push	{r4, lr}
+ 287              		.cfi_def_cfa_offset 8
+ 288              		.cfi_offset 4, -8
+ 289              		.cfi_offset 14, -4
+ 110:Core/Src/StepperMotor.c ****     GPIOD -> ODR = 0;
+ 290              		.loc 1 110 5 view .LVU51
+ 291              		.loc 1 110 18 is_stmt 0 view .LVU52
+ 292 0002 454B     		ldr	r3, .L49
+ 293 0004 0022     		movs	r2, #0
+ 294 0006 5A61     		str	r2, [r3, #20]
+ 111:Core/Src/StepperMotor.c ****     switch (stepperIndex)
+ 295              		.loc 1 111 5 is_stmt 1 view .LVU53
+ 296 0008 444B     		ldr	r3, .L49+4
+ 297 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 298 000c 032B     		cmp	r3, #3
+ 299 000e 10D8     		bhi	.L31
+ 300 0010 DFE803F0 		tbb	[pc, r3]
+ 301              	.L33:
+ 302 0014 02       		.byte	(.L36-.L33)/2
+ 303 0015 1C       		.byte	(.L35-.L33)/2
+ 304 0016 2A       		.byte	(.L34-.L33)/2
+ 305 0017 38       		.byte	(.L32-.L33)/2
+ 306              		.p2align 1
+ 307              	.L36:
+ 112:Core/Src/StepperMotor.c ****     {
+ 113:Core/Src/StepperMotor.c ****     case 0:
+ 114:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_3_GPIO_Port,Stepper_3_Pin,0);
+ 308              		.loc 1 114 9 view .LVU54
+ 309 0018 3F4C     		ldr	r4, .L49
+ 310 001a 0022     		movs	r2, #0
+ 311 001c 4FF40041 		mov	r1, #32768
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 9
+
+
+ 312 0020 2046     		mov	r0, r4
+ 313 0022 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 314              	.LVL18:
+ 115:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_0_GPIO_Port,Stepper_0_Pin,1);
+ 315              		.loc 1 115 9 view .LVU55
+ 316 0026 0122     		movs	r2, #1
+ 317 0028 4FF48051 		mov	r1, #4096
+ 318 002c 2046     		mov	r0, r4
+ 319 002e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 320              	.LVL19:
+ 116:Core/Src/StepperMotor.c ****         break;
+ 321              		.loc 1 116 9 view .LVU56
+ 322              	.L31:
+ 117:Core/Src/StepperMotor.c ****     case 1:
+ 118:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_0_GPIO_Port,Stepper_0_Pin,0);
+ 119:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_1_GPIO_Port,Stepper_1_Pin,1);
+ 120:Core/Src/StepperMotor.c ****         break;
+ 121:Core/Src/StepperMotor.c ****     case 2:
+ 122:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_1_GPIO_Port,Stepper_1_Pin,0);
+ 123:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_2_GPIO_Port,Stepper_2_Pin,1);
+ 124:Core/Src/StepperMotor.c ****         break;
+ 125:Core/Src/StepperMotor.c ****     case 3:
+ 126:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_2_GPIO_Port,Stepper_2_Pin,0);
+ 127:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_3_GPIO_Port,Stepper_3_Pin,1);
+ 128:Core/Src/StepperMotor.c ****         break;
+ 129:Core/Src/StepperMotor.c ****     
+ 130:Core/Src/StepperMotor.c ****     default:
+ 131:Core/Src/StepperMotor.c ****         break;
+ 132:Core/Src/StepperMotor.c ****     }
+ 133:Core/Src/StepperMotor.c **** 
+ 134:Core/Src/StepperMotor.c **** if (withLEDs == 1){
+ 323              		.loc 1 134 1 view .LVU57
+ 324              		.loc 1 134 14 is_stmt 0 view .LVU58
+ 325 0032 3B4B     		ldr	r3, .L49+8
+ 326 0034 B3F90030 		ldrsh	r3, [r3]
+ 327              		.loc 1 134 4 view .LVU59
+ 328 0038 012B     		cmp	r3, #1
+ 329 003a 31D0     		beq	.L47
+ 330              	.L37:
+ 135:Core/Src/StepperMotor.c ****         switch (stepperIndex)
+ 136:Core/Src/StepperMotor.c ****     {
+ 137:Core/Src/StepperMotor.c ****     case 0:
+ 138:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,0);
+ 139:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,1);
+ 140:Core/Src/StepperMotor.c ****         break;
+ 141:Core/Src/StepperMotor.c ****     case 1:
+ 142:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,0);
+ 143:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED1_Pin,1);
+ 144:Core/Src/StepperMotor.c ****         break;
+ 145:Core/Src/StepperMotor.c ****     case 2:
+ 146:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED1_Pin,0);
+ 147:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED2_Pin,1);
+ 148:Core/Src/StepperMotor.c ****         break;
+ 149:Core/Src/StepperMotor.c ****     case 3:
+ 150:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED2_Pin,0);
+ 151:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,1);
+ 152:Core/Src/StepperMotor.c ****         break;
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 10
+
+
+ 153:Core/Src/StepperMotor.c ****     
+ 154:Core/Src/StepperMotor.c ****     default:
+ 155:Core/Src/StepperMotor.c ****         break;
+ 156:Core/Src/StepperMotor.c ****     }
+ 157:Core/Src/StepperMotor.c **** }
+ 158:Core/Src/StepperMotor.c ****     
+ 159:Core/Src/StepperMotor.c ****     stepperIndex++;
+ 331              		.loc 1 159 5 is_stmt 1 view .LVU60
+ 332              		.loc 1 159 17 is_stmt 0 view .LVU61
+ 333 003c 374A     		ldr	r2, .L49+4
+ 334 003e 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 335 0040 0133     		adds	r3, r3, #1
+ 336 0042 DBB2     		uxtb	r3, r3
+ 337 0044 1370     		strb	r3, [r2]
+ 160:Core/Src/StepperMotor.c ****     if (stepperIndex == 4){
+ 338              		.loc 1 160 5 is_stmt 1 view .LVU62
+ 339              		.loc 1 160 8 is_stmt 0 view .LVU63
+ 340 0046 042B     		cmp	r3, #4
+ 341 0048 62D0     		beq	.L48
+ 342              	.L30:
+ 161:Core/Src/StepperMotor.c ****         stepperIndex = 0;
+ 162:Core/Src/StepperMotor.c ****     }
+ 163:Core/Src/StepperMotor.c **** }
+ 343              		.loc 1 163 1 view .LVU64
+ 344 004a 10BD     		pop	{r4, pc}
+ 345              	.L35:
+ 118:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_1_GPIO_Port,Stepper_1_Pin,1);
+ 346              		.loc 1 118 9 is_stmt 1 view .LVU65
+ 347 004c 324C     		ldr	r4, .L49
+ 348 004e 0022     		movs	r2, #0
+ 349 0050 4FF48051 		mov	r1, #4096
+ 350 0054 2046     		mov	r0, r4
+ 351 0056 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 352              	.LVL20:
+ 119:Core/Src/StepperMotor.c ****         break;
+ 353              		.loc 1 119 9 view .LVU66
+ 354 005a 0122     		movs	r2, #1
+ 355 005c 4FF48041 		mov	r1, #16384
+ 356 0060 2046     		mov	r0, r4
+ 357 0062 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 358              	.LVL21:
+ 120:Core/Src/StepperMotor.c ****     case 2:
+ 359              		.loc 1 120 9 view .LVU67
+ 360 0066 E4E7     		b	.L31
+ 361              	.L34:
+ 122:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_2_GPIO_Port,Stepper_2_Pin,1);
+ 362              		.loc 1 122 9 view .LVU68
+ 363 0068 2B4C     		ldr	r4, .L49
+ 364 006a 0022     		movs	r2, #0
+ 365 006c 4FF48041 		mov	r1, #16384
+ 366 0070 2046     		mov	r0, r4
+ 367 0072 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 368              	.LVL22:
+ 123:Core/Src/StepperMotor.c ****         break;
+ 369              		.loc 1 123 9 view .LVU69
+ 370 0076 0122     		movs	r2, #1
+ 371 0078 4FF40051 		mov	r1, #8192
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 11
+
+
+ 372 007c 2046     		mov	r0, r4
+ 373 007e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 374              	.LVL23:
+ 124:Core/Src/StepperMotor.c ****     case 3:
+ 375              		.loc 1 124 9 view .LVU70
+ 376 0082 D6E7     		b	.L31
+ 377              	.L32:
+ 126:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_3_GPIO_Port,Stepper_3_Pin,1);
+ 378              		.loc 1 126 9 view .LVU71
+ 379 0084 244C     		ldr	r4, .L49
+ 380 0086 0022     		movs	r2, #0
+ 381 0088 4FF40051 		mov	r1, #8192
+ 382 008c 2046     		mov	r0, r4
+ 383 008e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 384              	.LVL24:
+ 127:Core/Src/StepperMotor.c ****         break;
+ 385              		.loc 1 127 9 view .LVU72
+ 386 0092 0122     		movs	r2, #1
+ 387 0094 4FF40041 		mov	r1, #32768
+ 388 0098 2046     		mov	r0, r4
+ 389 009a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 390              	.LVL25:
+ 128:Core/Src/StepperMotor.c ****     
+ 391              		.loc 1 128 9 view .LVU73
+ 392 009e C8E7     		b	.L31
+ 393              	.L47:
+ 135:Core/Src/StepperMotor.c ****     {
+ 394              		.loc 1 135 9 view .LVU74
+ 395 00a0 1E4B     		ldr	r3, .L49+4
+ 396 00a2 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 397 00a4 032B     		cmp	r3, #3
+ 398 00a6 C9D8     		bhi	.L37
+ 399 00a8 DFE803F0 		tbb	[pc, r3]
+ 400              	.L39:
+ 401 00ac 02       		.byte	(.L42-.L39)/2
+ 402 00ad 0E       		.byte	(.L41-.L39)/2
+ 403 00ae 1A       		.byte	(.L40-.L39)/2
+ 404 00af 26       		.byte	(.L38-.L39)/2
+ 405              		.p2align 1
+ 406              	.L42:
+ 138:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,1);
+ 407              		.loc 1 138 9 view .LVU75
+ 408 00b0 1C4C     		ldr	r4, .L49+12
+ 409 00b2 0022     		movs	r2, #0
+ 410 00b4 0821     		movs	r1, #8
+ 411 00b6 2046     		mov	r0, r4
+ 412 00b8 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 413              	.LVL26:
+ 139:Core/Src/StepperMotor.c ****         break;
+ 414              		.loc 1 139 9 view .LVU76
+ 415 00bc 0122     		movs	r2, #1
+ 416 00be 1146     		mov	r1, r2
+ 417 00c0 2046     		mov	r0, r4
+ 418 00c2 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 419              	.LVL27:
+ 140:Core/Src/StepperMotor.c ****     case 1:
+ 420              		.loc 1 140 9 view .LVU77
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 12
+
+
+ 421 00c6 B9E7     		b	.L37
+ 422              	.L41:
+ 142:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED1_Pin,1);
+ 423              		.loc 1 142 9 view .LVU78
+ 424 00c8 164C     		ldr	r4, .L49+12
+ 425 00ca 0022     		movs	r2, #0
+ 426 00cc 0121     		movs	r1, #1
+ 427 00ce 2046     		mov	r0, r4
+ 428 00d0 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 429              	.LVL28:
+ 143:Core/Src/StepperMotor.c ****         break;
+ 430              		.loc 1 143 9 view .LVU79
+ 431 00d4 0122     		movs	r2, #1
+ 432 00d6 0221     		movs	r1, #2
+ 433 00d8 2046     		mov	r0, r4
+ 434 00da FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 435              	.LVL29:
+ 144:Core/Src/StepperMotor.c ****     case 2:
+ 436              		.loc 1 144 9 view .LVU80
+ 437 00de ADE7     		b	.L37
+ 438              	.L40:
+ 146:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED2_Pin,1);
+ 439              		.loc 1 146 9 view .LVU81
+ 440 00e0 104C     		ldr	r4, .L49+12
+ 441 00e2 0022     		movs	r2, #0
+ 442 00e4 0221     		movs	r1, #2
+ 443 00e6 2046     		mov	r0, r4
+ 444 00e8 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 445              	.LVL30:
+ 147:Core/Src/StepperMotor.c ****         break;
+ 446              		.loc 1 147 9 view .LVU82
+ 447 00ec 0122     		movs	r2, #1
+ 448 00ee 0421     		movs	r1, #4
+ 449 00f0 2046     		mov	r0, r4
+ 450 00f2 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 451              	.LVL31:
+ 148:Core/Src/StepperMotor.c ****     case 3:
+ 452              		.loc 1 148 9 view .LVU83
+ 453 00f6 A1E7     		b	.L37
+ 454              	.L38:
+ 150:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,1);
+ 455              		.loc 1 150 9 view .LVU84
+ 456 00f8 0A4C     		ldr	r4, .L49+12
+ 457 00fa 0022     		movs	r2, #0
+ 458 00fc 0421     		movs	r1, #4
+ 459 00fe 2046     		mov	r0, r4
+ 460 0100 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 461              	.LVL32:
+ 151:Core/Src/StepperMotor.c ****         break;
+ 462              		.loc 1 151 9 view .LVU85
+ 463 0104 0122     		movs	r2, #1
+ 464 0106 0821     		movs	r1, #8
+ 465 0108 2046     		mov	r0, r4
+ 466 010a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 467              	.LVL33:
+ 152:Core/Src/StepperMotor.c ****     
+ 468              		.loc 1 152 9 view .LVU86
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 13
+
+
+ 469 010e 95E7     		b	.L37
+ 470              	.L48:
+ 161:Core/Src/StepperMotor.c ****     }
+ 471              		.loc 1 161 9 view .LVU87
+ 161:Core/Src/StepperMotor.c ****     }
+ 472              		.loc 1 161 22 is_stmt 0 view .LVU88
+ 473 0110 1346     		mov	r3, r2
+ 474 0112 0022     		movs	r2, #0
+ 475 0114 1A70     		strb	r2, [r3]
+ 476              		.loc 1 163 1 view .LVU89
+ 477 0116 98E7     		b	.L30
+ 478              	.L50:
+ 479              		.align	2
+ 480              	.L49:
+ 481 0118 000C0240 		.word	1073875968
+ 482 011c 00000000 		.word	stepperIndex
+ 483 0120 00000000 		.word	withLEDs
+ 484 0124 00040240 		.word	1073873920
+ 485              		.cfi_endproc
+ 486              	.LFE237:
+ 488              		.section	.text.FullModeSequence,"ax",%progbits
+ 489              		.align	1
+ 490              		.global	FullModeSequence
+ 491              		.syntax unified
+ 492              		.thumb
+ 493              		.thumb_func
+ 495              	FullModeSequence:
+ 496              	.LFB238:
+ 164:Core/Src/StepperMotor.c **** 
+ 165:Core/Src/StepperMotor.c **** void FullModeSequence(void){
+ 497              		.loc 1 165 28 is_stmt 1 view -0
+ 498              		.cfi_startproc
+ 499              		@ args = 0, pretend = 0, frame = 0
+ 500              		@ frame_needed = 0, uses_anonymous_args = 0
+ 501 0000 10B5     		push	{r4, lr}
+ 502              		.cfi_def_cfa_offset 8
+ 503              		.cfi_offset 4, -8
+ 504              		.cfi_offset 14, -4
+ 166:Core/Src/StepperMotor.c ****     GPIOD -> ODR = 0;
+ 505              		.loc 1 166 5 view .LVU91
+ 506              		.loc 1 166 18 is_stmt 0 view .LVU92
+ 507 0002 5C4B     		ldr	r3, .L70
+ 508 0004 0022     		movs	r2, #0
+ 509 0006 5A61     		str	r2, [r3, #20]
+ 167:Core/Src/StepperMotor.c ****     switch (stepperIndex)
+ 510              		.loc 1 167 5 is_stmt 1 view .LVU93
+ 511 0008 5B4B     		ldr	r3, .L70+4
+ 512 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 513 000c 032B     		cmp	r3, #3
+ 514 000e 16D8     		bhi	.L52
+ 515 0010 DFE803F0 		tbb	[pc, r3]
+ 516              	.L54:
+ 517 0014 02       		.byte	(.L57-.L54)/2
+ 518 0015 23       		.byte	(.L56-.L54)/2
+ 519 0016 37       		.byte	(.L55-.L54)/2
+ 520 0017 4B       		.byte	(.L53-.L54)/2
+ 521              		.p2align 1
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 14
+
+
+ 522              	.L57:
+ 168:Core/Src/StepperMotor.c ****     {
+ 169:Core/Src/StepperMotor.c ****     case 0:
+ 170:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_3_GPIO_Port,Stepper_3_Pin,0);
+ 523              		.loc 1 170 9 view .LVU94
+ 524 0018 564C     		ldr	r4, .L70
+ 525 001a 0022     		movs	r2, #0
+ 526 001c 4FF40041 		mov	r1, #32768
+ 527 0020 2046     		mov	r0, r4
+ 528 0022 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 529              	.LVL34:
+ 171:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_0_GPIO_Port,Stepper_0_Pin,1);
+ 530              		.loc 1 171 9 view .LVU95
+ 531 0026 0122     		movs	r2, #1
+ 532 0028 4FF48051 		mov	r1, #4096
+ 533 002c 2046     		mov	r0, r4
+ 534 002e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 535              	.LVL35:
+ 172:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_1_GPIO_Port,Stepper_1_Pin,1);
+ 536              		.loc 1 172 9 view .LVU96
+ 537 0032 0122     		movs	r2, #1
+ 538 0034 4FF48041 		mov	r1, #16384
+ 539 0038 2046     		mov	r0, r4
+ 540 003a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 541              	.LVL36:
+ 173:Core/Src/StepperMotor.c ****         break;
+ 542              		.loc 1 173 9 view .LVU97
+ 543              	.L52:
+ 174:Core/Src/StepperMotor.c ****     case 1:
+ 175:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_0_GPIO_Port,Stepper_0_Pin,0);
+ 176:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_1_GPIO_Port,Stepper_1_Pin,1);
+ 177:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_2_GPIO_Port,Stepper_2_Pin,1);
+ 178:Core/Src/StepperMotor.c ****         break;
+ 179:Core/Src/StepperMotor.c ****     case 2:
+ 180:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_1_GPIO_Port,Stepper_1_Pin,0);
+ 181:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_2_GPIO_Port,Stepper_2_Pin,1);
+ 182:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_3_GPIO_Port,Stepper_3_Pin,1);
+ 183:Core/Src/StepperMotor.c ****         break;
+ 184:Core/Src/StepperMotor.c ****     case 3:
+ 185:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_2_GPIO_Port,Stepper_2_Pin,0);
+ 186:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_3_GPIO_Port,Stepper_3_Pin,1);
+ 187:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_0_GPIO_Port,Stepper_0_Pin,1);
+ 188:Core/Src/StepperMotor.c ****         break;
+ 189:Core/Src/StepperMotor.c ****     
+ 190:Core/Src/StepperMotor.c ****     default:
+ 191:Core/Src/StepperMotor.c ****         break;
+ 192:Core/Src/StepperMotor.c ****     }
+ 193:Core/Src/StepperMotor.c **** 
+ 194:Core/Src/StepperMotor.c ****     if (withLEDs == 1){
+ 544              		.loc 1 194 5 view .LVU98
+ 545              		.loc 1 194 18 is_stmt 0 view .LVU99
+ 546 003e 4F4B     		ldr	r3, .L70+8
+ 547 0040 B3F90030 		ldrsh	r3, [r3]
+ 548              		.loc 1 194 8 view .LVU100
+ 549 0044 012B     		cmp	r3, #1
+ 550 0046 44D0     		beq	.L68
+ 551              	.L58:
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 15
+
+
+ 195:Core/Src/StepperMotor.c ****             switch (stepperIndex)
+ 196:Core/Src/StepperMotor.c ****     {
+ 197:Core/Src/StepperMotor.c ****     case 0:
+ 198:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,0);
+ 199:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,1);
+ 200:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED1_Pin,1);
+ 201:Core/Src/StepperMotor.c ****         break;
+ 202:Core/Src/StepperMotor.c ****     case 1:
+ 203:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,0);
+ 204:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED1_Pin,1);
+ 205:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED2_Pin,1);
+ 206:Core/Src/StepperMotor.c ****         break;
+ 207:Core/Src/StepperMotor.c ****     case 2:
+ 208:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED1_Pin,0);
+ 209:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED2_Pin,1);
+ 210:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,1);
+ 211:Core/Src/StepperMotor.c ****         break;
+ 212:Core/Src/StepperMotor.c ****     case 3:
+ 213:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED2_Pin,0);
+ 214:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,1);
+ 215:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,1);
+ 216:Core/Src/StepperMotor.c ****         break;
+ 217:Core/Src/StepperMotor.c ****     
+ 218:Core/Src/StepperMotor.c ****     default:
+ 219:Core/Src/StepperMotor.c ****         break;
+ 220:Core/Src/StepperMotor.c ****     }
+ 221:Core/Src/StepperMotor.c ****     }
+ 222:Core/Src/StepperMotor.c ****     stepperIndex++;
+ 552              		.loc 1 222 5 is_stmt 1 view .LVU101
+ 553              		.loc 1 222 17 is_stmt 0 view .LVU102
+ 554 0048 4B4A     		ldr	r2, .L70+4
+ 555 004a 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 556 004c 0133     		adds	r3, r3, #1
+ 557 004e DBB2     		uxtb	r3, r3
+ 558 0050 1370     		strb	r3, [r2]
+ 223:Core/Src/StepperMotor.c ****     if (stepperIndex == 4){
+ 559              		.loc 1 223 5 is_stmt 1 view .LVU103
+ 560              		.loc 1 223 8 is_stmt 0 view .LVU104
+ 561 0052 042B     		cmp	r3, #4
+ 562 0054 00F08980 		beq	.L69
+ 563              	.L51:
+ 224:Core/Src/StepperMotor.c ****         stepperIndex = 0;
+ 225:Core/Src/StepperMotor.c ****     }
+ 226:Core/Src/StepperMotor.c **** }
+ 564              		.loc 1 226 1 view .LVU105
+ 565 0058 10BD     		pop	{r4, pc}
+ 566              	.L56:
+ 175:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_1_GPIO_Port,Stepper_1_Pin,1);
+ 567              		.loc 1 175 9 is_stmt 1 view .LVU106
+ 568 005a 464C     		ldr	r4, .L70
+ 569 005c 0022     		movs	r2, #0
+ 570 005e 4FF48051 		mov	r1, #4096
+ 571 0062 2046     		mov	r0, r4
+ 572 0064 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 573              	.LVL37:
+ 176:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_2_GPIO_Port,Stepper_2_Pin,1);
+ 574              		.loc 1 176 9 view .LVU107
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 16
+
+
+ 575 0068 0122     		movs	r2, #1
+ 576 006a 4FF48041 		mov	r1, #16384
+ 577 006e 2046     		mov	r0, r4
+ 578 0070 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 579              	.LVL38:
+ 177:Core/Src/StepperMotor.c ****         break;
+ 580              		.loc 1 177 9 view .LVU108
+ 581 0074 0122     		movs	r2, #1
+ 582 0076 4FF40051 		mov	r1, #8192
+ 583 007a 2046     		mov	r0, r4
+ 584 007c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 585              	.LVL39:
+ 178:Core/Src/StepperMotor.c ****     case 2:
+ 586              		.loc 1 178 9 view .LVU109
+ 587 0080 DDE7     		b	.L52
+ 588              	.L55:
+ 180:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_2_GPIO_Port,Stepper_2_Pin,1);
+ 589              		.loc 1 180 9 view .LVU110
+ 590 0082 3C4C     		ldr	r4, .L70
+ 591 0084 0022     		movs	r2, #0
+ 592 0086 4FF48041 		mov	r1, #16384
+ 593 008a 2046     		mov	r0, r4
+ 594 008c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 595              	.LVL40:
+ 181:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_3_GPIO_Port,Stepper_3_Pin,1);
+ 596              		.loc 1 181 9 view .LVU111
+ 597 0090 0122     		movs	r2, #1
+ 598 0092 4FF40051 		mov	r1, #8192
+ 599 0096 2046     		mov	r0, r4
+ 600 0098 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 601              	.LVL41:
+ 182:Core/Src/StepperMotor.c ****         break;
+ 602              		.loc 1 182 9 view .LVU112
+ 603 009c 0122     		movs	r2, #1
+ 604 009e 4FF40041 		mov	r1, #32768
+ 605 00a2 2046     		mov	r0, r4
+ 606 00a4 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 607              	.LVL42:
+ 183:Core/Src/StepperMotor.c ****     case 3:
+ 608              		.loc 1 183 9 view .LVU113
+ 609 00a8 C9E7     		b	.L52
+ 610              	.L53:
+ 185:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_3_GPIO_Port,Stepper_3_Pin,1);
+ 611              		.loc 1 185 9 view .LVU114
+ 612 00aa 324C     		ldr	r4, .L70
+ 613 00ac 0022     		movs	r2, #0
+ 614 00ae 4FF40051 		mov	r1, #8192
+ 615 00b2 2046     		mov	r0, r4
+ 616 00b4 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 617              	.LVL43:
+ 186:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(Stepper_0_GPIO_Port,Stepper_0_Pin,1);
+ 618              		.loc 1 186 9 view .LVU115
+ 619 00b8 0122     		movs	r2, #1
+ 620 00ba 4FF40041 		mov	r1, #32768
+ 621 00be 2046     		mov	r0, r4
+ 622 00c0 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 623              	.LVL44:
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 17
+
+
+ 187:Core/Src/StepperMotor.c ****         break;
+ 624              		.loc 1 187 9 view .LVU116
+ 625 00c4 0122     		movs	r2, #1
+ 626 00c6 4FF48051 		mov	r1, #4096
+ 627 00ca 2046     		mov	r0, r4
+ 628 00cc FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 629              	.LVL45:
+ 188:Core/Src/StepperMotor.c ****     
+ 630              		.loc 1 188 9 view .LVU117
+ 631 00d0 B5E7     		b	.L52
+ 632              	.L68:
+ 195:Core/Src/StepperMotor.c ****     {
+ 633              		.loc 1 195 13 view .LVU118
+ 634 00d2 294B     		ldr	r3, .L70+4
+ 635 00d4 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 636 00d6 032B     		cmp	r3, #3
+ 637 00d8 B6D8     		bhi	.L58
+ 638 00da DFE803F0 		tbb	[pc, r3]
+ 639              	.L60:
+ 640 00de 02       		.byte	(.L63-.L60)/2
+ 641 00df 13       		.byte	(.L62-.L60)/2
+ 642 00e0 24       		.byte	(.L61-.L60)/2
+ 643 00e1 35       		.byte	(.L59-.L60)/2
+ 644              		.p2align 1
+ 645              	.L63:
+ 198:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,1);
+ 646              		.loc 1 198 9 view .LVU119
+ 647 00e2 274C     		ldr	r4, .L70+12
+ 648 00e4 0022     		movs	r2, #0
+ 649 00e6 0821     		movs	r1, #8
+ 650 00e8 2046     		mov	r0, r4
+ 651 00ea FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 652              	.LVL46:
+ 199:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED1_Pin,1);
+ 653              		.loc 1 199 9 view .LVU120
+ 654 00ee 0122     		movs	r2, #1
+ 655 00f0 1146     		mov	r1, r2
+ 656 00f2 2046     		mov	r0, r4
+ 657 00f4 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 658              	.LVL47:
+ 200:Core/Src/StepperMotor.c ****         break;
+ 659              		.loc 1 200 9 view .LVU121
+ 660 00f8 0122     		movs	r2, #1
+ 661 00fa 0221     		movs	r1, #2
+ 662 00fc 2046     		mov	r0, r4
+ 663 00fe FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 664              	.LVL48:
+ 201:Core/Src/StepperMotor.c ****     case 1:
+ 665              		.loc 1 201 9 view .LVU122
+ 666 0102 A1E7     		b	.L58
+ 667              	.L62:
+ 203:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED1_Pin,1);
+ 668              		.loc 1 203 9 view .LVU123
+ 669 0104 1E4C     		ldr	r4, .L70+12
+ 670 0106 0022     		movs	r2, #0
+ 671 0108 0121     		movs	r1, #1
+ 672 010a 2046     		mov	r0, r4
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 18
+
+
+ 673 010c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 674              	.LVL49:
+ 204:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED2_Pin,1);
+ 675              		.loc 1 204 9 view .LVU124
+ 676 0110 0122     		movs	r2, #1
+ 677 0112 0221     		movs	r1, #2
+ 678 0114 2046     		mov	r0, r4
+ 679 0116 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 680              	.LVL50:
+ 205:Core/Src/StepperMotor.c ****         break;
+ 681              		.loc 1 205 9 view .LVU125
+ 682 011a 0122     		movs	r2, #1
+ 683 011c 0421     		movs	r1, #4
+ 684 011e 2046     		mov	r0, r4
+ 685 0120 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 686              	.LVL51:
+ 206:Core/Src/StepperMotor.c ****     case 2:
+ 687              		.loc 1 206 9 view .LVU126
+ 688 0124 90E7     		b	.L58
+ 689              	.L61:
+ 208:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED2_Pin,1);
+ 690              		.loc 1 208 9 view .LVU127
+ 691 0126 164C     		ldr	r4, .L70+12
+ 692 0128 0022     		movs	r2, #0
+ 693 012a 0221     		movs	r1, #2
+ 694 012c 2046     		mov	r0, r4
+ 695 012e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 696              	.LVL52:
+ 209:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,1);
+ 697              		.loc 1 209 9 view .LVU128
+ 698 0132 0122     		movs	r2, #1
+ 699 0134 0421     		movs	r1, #4
+ 700 0136 2046     		mov	r0, r4
+ 701 0138 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 702              	.LVL53:
+ 210:Core/Src/StepperMotor.c ****         break;
+ 703              		.loc 1 210 9 view .LVU129
+ 704 013c 0122     		movs	r2, #1
+ 705 013e 0821     		movs	r1, #8
+ 706 0140 2046     		mov	r0, r4
+ 707 0142 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 708              	.LVL54:
+ 211:Core/Src/StepperMotor.c ****     case 3:
+ 709              		.loc 1 211 9 view .LVU130
+ 710 0146 7FE7     		b	.L58
+ 711              	.L59:
+ 213:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED3_Pin,1);
+ 712              		.loc 1 213 9 view .LVU131
+ 713 0148 0D4C     		ldr	r4, .L70+12
+ 714 014a 0022     		movs	r2, #0
+ 715 014c 0421     		movs	r1, #4
+ 716 014e 2046     		mov	r0, r4
+ 717 0150 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 718              	.LVL55:
+ 214:Core/Src/StepperMotor.c ****         HAL_GPIO_WritePin(LED0_GPIO_Port,LED0_Pin,1);
+ 719              		.loc 1 214 9 view .LVU132
+ 720 0154 0122     		movs	r2, #1
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 19
+
+
+ 721 0156 0821     		movs	r1, #8
+ 722 0158 2046     		mov	r0, r4
+ 723 015a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 724              	.LVL56:
+ 215:Core/Src/StepperMotor.c ****         break;
+ 725              		.loc 1 215 9 view .LVU133
+ 726 015e 0122     		movs	r2, #1
+ 727 0160 1146     		mov	r1, r2
+ 728 0162 2046     		mov	r0, r4
+ 729 0164 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 730              	.LVL57:
+ 216:Core/Src/StepperMotor.c ****     
+ 731              		.loc 1 216 9 view .LVU134
+ 732 0168 6EE7     		b	.L58
+ 733              	.L69:
+ 224:Core/Src/StepperMotor.c ****     }
+ 734              		.loc 1 224 9 view .LVU135
+ 224:Core/Src/StepperMotor.c ****     }
+ 735              		.loc 1 224 22 is_stmt 0 view .LVU136
+ 736 016a 1346     		mov	r3, r2
+ 737 016c 0022     		movs	r2, #0
+ 738 016e 1A70     		strb	r2, [r3]
+ 739              		.loc 1 226 1 view .LVU137
+ 740 0170 72E7     		b	.L51
+ 741              	.L71:
+ 742 0172 00BF     		.align	2
+ 743              	.L70:
+ 744 0174 000C0240 		.word	1073875968
+ 745 0178 00000000 		.word	stepperIndex
+ 746 017c 00000000 		.word	withLEDs
+ 747 0180 00040240 		.word	1073873920
+ 748              		.cfi_endproc
+ 749              	.LFE238:
+ 751              		.section	.text.setStepperSpeed,"ax",%progbits
+ 752              		.align	1
+ 753              		.global	setStepperSpeed
+ 754              		.syntax unified
+ 755              		.thumb
+ 756              		.thumb_func
+ 758              	setStepperSpeed:
+ 759              	.LVL58:
+ 760              	.LFB235:
+  20:Core/Src/StepperMotor.c ****     if (millirRPM == 0){
+ 761              		.loc 1 20 41 is_stmt 1 view -0
+ 762              		.cfi_startproc
+ 763              		@ args = 0, pretend = 0, frame = 0
+ 764              		@ frame_needed = 0, uses_anonymous_args = 0
+  20:Core/Src/StepperMotor.c ****     if (millirRPM == 0){
+ 765              		.loc 1 20 41 is_stmt 0 view .LVU139
+ 766 0000 10B5     		push	{r4, lr}
+ 767              		.cfi_def_cfa_offset 8
+ 768              		.cfi_offset 4, -8
+ 769              		.cfi_offset 14, -4
+  21:Core/Src/StepperMotor.c ****         HAL_TIM_Base_Stop_IT(&htim4);
+ 770              		.loc 1 21 5 is_stmt 1 view .LVU140
+  21:Core/Src/StepperMotor.c ****         HAL_TIM_Base_Stop_IT(&htim4);
+ 771              		.loc 1 21 8 is_stmt 0 view .LVU141
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 20
+
+
+ 772 0002 0446     		mov	r4, r0
+ 773 0004 B0B1     		cbz	r0, .L77
+  24:Core/Src/StepperMotor.c ****         millirRPM = 8400;
+ 774              		.loc 1 24 10 is_stmt 1 view .LVU142
+  24:Core/Src/StepperMotor.c ****         millirRPM = 8400;
+ 775              		.loc 1 24 13 is_stmt 0 view .LVU143
+ 776 0006 42F2CF03 		movw	r3, #8399
+ 777 000a 9842     		cmp	r0, r3
+ 778 000c 01D9     		bls	.L74
+  25:Core/Src/StepperMotor.c ****     }
+ 779              		.loc 1 25 19 view .LVU144
+ 780 000e 42F2D004 		movw	r4, #8400
+ 781              	.LVL59:
+ 782              	.L74:
+  28:Core/Src/StepperMotor.c ****     TIM4->ARR = tempARR*1000/millirRPM;
+ 783              		.loc 1 28 5 is_stmt 1 view .LVU145
+  28:Core/Src/StepperMotor.c ****     TIM4->ARR = tempARR*1000/millirRPM;
+ 784              		.loc 1 28 23 is_stmt 0 view .LVU146
+ 785 0012 0A4B     		ldr	r3, .L78
+ 786 0014 1A68     		ldr	r2, [r3]
+ 787 0016 0A4B     		ldr	r3, .L78+4
+ 788 0018 93FBF2F3 		sdiv	r3, r3, r2
+  28:Core/Src/StepperMotor.c ****     TIM4->ARR = tempARR*1000/millirRPM;
+ 789              		.loc 1 28 13 view .LVU147
+ 790 001c 094A     		ldr	r2, .L78+8
+ 791 001e 1370     		strb	r3, [r2]
+  29:Core/Src/StepperMotor.c **** 
+ 792              		.loc 1 29 5 is_stmt 1 view .LVU148
+  29:Core/Src/StepperMotor.c **** 
+ 793              		.loc 1 29 24 is_stmt 0 view .LVU149
+ 794 0020 DBB2     		uxtb	r3, r3
+ 795 0022 4FF47A72 		mov	r2, #1000
+ 796 0026 02FB03F3 		mul	r3, r2, r3
+  29:Core/Src/StepperMotor.c **** 
+ 797              		.loc 1 29 29 view .LVU150
+ 798 002a 93FBF4F3 		sdiv	r3, r3, r4
+  29:Core/Src/StepperMotor.c **** 
+ 799              		.loc 1 29 15 view .LVU151
+ 800 002e 064A     		ldr	r2, .L78+12
+ 801 0030 D362     		str	r3, [r2, #44]
+  32:Core/Src/StepperMotor.c **** 
+ 802              		.loc 1 32 1 view .LVU152
+ 803 0032 10BD     		pop	{r4, pc}
+ 804              	.LVL60:
+ 805              	.L77:
+  22:Core/Src/StepperMotor.c ****     }
+ 806              		.loc 1 22 9 is_stmt 1 view .LVU153
+ 807 0034 0548     		ldr	r0, .L78+16
+ 808              	.LVL61:
+  22:Core/Src/StepperMotor.c ****     }
+ 809              		.loc 1 22 9 is_stmt 0 view .LVU154
+ 810 0036 FFF7FEFF 		bl	HAL_TIM_Base_Stop_IT
+ 811              	.LVL62:
+ 812 003a EAE7     		b	.L74
+ 813              	.L79:
+ 814              		.align	2
+ 815              	.L78:
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 21
+
+
+ 816 003c 00000000 		.word	fullRevolution
+ 817 0040 00BD0105 		.word	84000000
+ 818 0044 00000000 		.word	tempARR
+ 819 0048 00080040 		.word	1073743872
+ 820 004c 00000000 		.word	htim4
+ 821              		.cfi_endproc
+ 822              	.LFE235:
+ 824              		.section	.text.init_StepperMotor,"ax",%progbits
+ 825              		.align	1
+ 826              		.global	init_StepperMotor
+ 827              		.syntax unified
+ 828              		.thumb
+ 829              		.thumb_func
+ 831              	init_StepperMotor:
+ 832              	.LVL63:
+ 833              	.LFB239:
+ 227:Core/Src/StepperMotor.c **** 
+ 228:Core/Src/StepperMotor.c **** void init_StepperMotor(short mode,int NoStepsForFullRevolution,short display){
+ 834              		.loc 1 228 78 is_stmt 1 view -0
+ 835              		.cfi_startproc
+ 836              		@ args = 0, pretend = 0, frame = 0
+ 837              		@ frame_needed = 0, uses_anonymous_args = 0
+ 838              		.loc 1 228 78 is_stmt 0 view .LVU156
+ 839 0000 10B5     		push	{r4, lr}
+ 840              		.cfi_def_cfa_offset 8
+ 841              		.cfi_offset 4, -8
+ 842              		.cfi_offset 14, -4
+ 843 0002 0446     		mov	r4, r0
+ 229:Core/Src/StepperMotor.c ****     fullRevolution = NoStepsForFullRevolution;
+ 844              		.loc 1 229 5 is_stmt 1 view .LVU157
+ 845              		.loc 1 229 20 is_stmt 0 view .LVU158
+ 846 0004 144B     		ldr	r3, .L89
+ 847 0006 1960     		str	r1, [r3]
+ 230:Core/Src/StepperMotor.c **** 
+ 231:Core/Src/StepperMotor.c ****     if (display == WITH_LEDS){withLEDs = 1;}
+ 848              		.loc 1 231 5 is_stmt 1 view .LVU159
+ 849              		.loc 1 231 8 is_stmt 0 view .LVU160
+ 850 0008 12B9     		cbnz	r2, .L81
+ 851              		.loc 1 231 31 is_stmt 1 discriminator 1 view .LVU161
+ 852              		.loc 1 231 40 is_stmt 0 discriminator 1 view .LVU162
+ 853 000a 144B     		ldr	r3, .L89+4
+ 854 000c 0122     		movs	r2, #1
+ 855              	.LVL64:
+ 856              		.loc 1 231 40 discriminator 1 view .LVU163
+ 857 000e 1A80     		strh	r2, [r3]	@ movhi
+ 858              	.L81:
+ 232:Core/Src/StepperMotor.c ****     
+ 233:Core/Src/StepperMotor.c ****     if (mode == STEPPER_HALF_MODE){
+ 859              		.loc 1 233 5 is_stmt 1 view .LVU164
+ 860              		.loc 1 233 8 is_stmt 0 view .LVU165
+ 861 0010 3CB1     		cbz	r4, .L86
+ 862              	.LVL65:
+ 863              	.L82:
+ 234:Core/Src/StepperMotor.c ****         GPIOB->ODR = 0;
+ 235:Core/Src/StepperMotor.c ****         HAL_TIM_RegisterCallback(&htim4, HAL_TIM_PERIOD_ELAPSED_CB_ID, HalfModeSequence);
+ 236:Core/Src/StepperMotor.c ****     }
+ 237:Core/Src/StepperMotor.c ****     if (mode == STEPPER_WAVE_MODE){
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 22
+
+
+ 864              		.loc 1 237 5 is_stmt 1 view .LVU166
+ 865              		.loc 1 237 8 is_stmt 0 view .LVU167
+ 866 0012 012C     		cmp	r4, #1
+ 867 0014 0ED0     		beq	.L87
+ 868              	.L83:
+ 238:Core/Src/StepperMotor.c ****         GPIOB->ODR = 0;
+ 239:Core/Src/StepperMotor.c ****         HAL_TIM_RegisterCallback(&htim4, HAL_TIM_PERIOD_ELAPSED_CB_ID, WaveModeSequence);
+ 240:Core/Src/StepperMotor.c ****     }
+ 241:Core/Src/StepperMotor.c ****     if (mode == STEPPER_FULL_MODE){
+ 869              		.loc 1 241 5 is_stmt 1 view .LVU168
+ 870              		.loc 1 241 8 is_stmt 0 view .LVU169
+ 871 0016 022C     		cmp	r4, #2
+ 872 0018 15D0     		beq	.L88
+ 873              	.L84:
+ 242:Core/Src/StepperMotor.c ****         GPIOB->ODR = 0;
+ 243:Core/Src/StepperMotor.c ****         HAL_TIM_RegisterCallback(&htim4, HAL_TIM_PERIOD_ELAPSED_CB_ID, FullModeSequence);
+ 244:Core/Src/StepperMotor.c ****     }
+ 245:Core/Src/StepperMotor.c ****     
+ 246:Core/Src/StepperMotor.c ****     HAL_TIM_Base_Start_IT(&htim4);
+ 874              		.loc 1 246 5 is_stmt 1 view .LVU170
+ 875 001a 1148     		ldr	r0, .L89+8
+ 876 001c FFF7FEFF 		bl	HAL_TIM_Base_Start_IT
+ 877              	.LVL66:
+ 247:Core/Src/StepperMotor.c ****     
+ 248:Core/Src/StepperMotor.c **** }
+ 878              		.loc 1 248 1 is_stmt 0 view .LVU171
+ 879 0020 10BD     		pop	{r4, pc}
+ 880              	.LVL67:
+ 881              	.L86:
+ 234:Core/Src/StepperMotor.c ****         HAL_TIM_RegisterCallback(&htim4, HAL_TIM_PERIOD_ELAPSED_CB_ID, HalfModeSequence);
+ 882              		.loc 1 234 9 is_stmt 1 view .LVU172
+ 234:Core/Src/StepperMotor.c ****         HAL_TIM_RegisterCallback(&htim4, HAL_TIM_PERIOD_ELAPSED_CB_ID, HalfModeSequence);
+ 883              		.loc 1 234 20 is_stmt 0 view .LVU173
+ 884 0022 104B     		ldr	r3, .L89+12
+ 885 0024 0022     		movs	r2, #0
+ 886 0026 5A61     		str	r2, [r3, #20]
+ 235:Core/Src/StepperMotor.c ****     }
+ 887              		.loc 1 235 9 is_stmt 1 view .LVU174
+ 888 0028 0F4A     		ldr	r2, .L89+16
+ 889 002a 0E21     		movs	r1, #14
+ 890              	.LVL68:
+ 235:Core/Src/StepperMotor.c ****     }
+ 891              		.loc 1 235 9 is_stmt 0 view .LVU175
+ 892 002c 0C48     		ldr	r0, .L89+8
+ 893              	.LVL69:
+ 235:Core/Src/StepperMotor.c ****     }
+ 894              		.loc 1 235 9 view .LVU176
+ 895 002e FFF7FEFF 		bl	HAL_TIM_RegisterCallback
+ 896              	.LVL70:
+ 897 0032 EEE7     		b	.L82
+ 898              	.L87:
+ 238:Core/Src/StepperMotor.c ****         HAL_TIM_RegisterCallback(&htim4, HAL_TIM_PERIOD_ELAPSED_CB_ID, WaveModeSequence);
+ 899              		.loc 1 238 9 is_stmt 1 view .LVU177
+ 238:Core/Src/StepperMotor.c ****         HAL_TIM_RegisterCallback(&htim4, HAL_TIM_PERIOD_ELAPSED_CB_ID, WaveModeSequence);
+ 900              		.loc 1 238 20 is_stmt 0 view .LVU178
+ 901 0034 0B4B     		ldr	r3, .L89+12
+ 902 0036 0022     		movs	r2, #0
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 23
+
+
+ 903 0038 5A61     		str	r2, [r3, #20]
+ 239:Core/Src/StepperMotor.c ****     }
+ 904              		.loc 1 239 9 is_stmt 1 view .LVU179
+ 905 003a 0C4A     		ldr	r2, .L89+20
+ 906 003c 0E21     		movs	r1, #14
+ 907 003e 0848     		ldr	r0, .L89+8
+ 908 0040 FFF7FEFF 		bl	HAL_TIM_RegisterCallback
+ 909              	.LVL71:
+ 910 0044 E7E7     		b	.L83
+ 911              	.L88:
+ 242:Core/Src/StepperMotor.c ****         HAL_TIM_RegisterCallback(&htim4, HAL_TIM_PERIOD_ELAPSED_CB_ID, FullModeSequence);
+ 912              		.loc 1 242 9 view .LVU180
+ 242:Core/Src/StepperMotor.c ****         HAL_TIM_RegisterCallback(&htim4, HAL_TIM_PERIOD_ELAPSED_CB_ID, FullModeSequence);
+ 913              		.loc 1 242 20 is_stmt 0 view .LVU181
+ 914 0046 074B     		ldr	r3, .L89+12
+ 915 0048 0022     		movs	r2, #0
+ 916 004a 5A61     		str	r2, [r3, #20]
+ 243:Core/Src/StepperMotor.c ****     }
+ 917              		.loc 1 243 9 is_stmt 1 view .LVU182
+ 918 004c 084A     		ldr	r2, .L89+24
+ 919 004e 0E21     		movs	r1, #14
+ 920 0050 0348     		ldr	r0, .L89+8
+ 921 0052 FFF7FEFF 		bl	HAL_TIM_RegisterCallback
+ 922              	.LVL72:
+ 923 0056 E0E7     		b	.L84
+ 924              	.L90:
+ 925              		.align	2
+ 926              	.L89:
+ 927 0058 00000000 		.word	fullRevolution
+ 928 005c 00000000 		.word	withLEDs
+ 929 0060 00000000 		.word	htim4
+ 930 0064 00040240 		.word	1073873920
+ 931 0068 00000000 		.word	HalfModeSequence
+ 932 006c 00000000 		.word	WaveModeSequence
+ 933 0070 00000000 		.word	FullModeSequence
+ 934              		.cfi_endproc
+ 935              	.LFE239:
+ 937              		.global	fullRevolution
+ 938              		.section	.data.fullRevolution,"aw"
+ 939              		.align	2
+ 942              	fullRevolution:
+ 943 0000 00100000 		.word	4096
+ 944              		.global	withLEDs
+ 945              		.section	.bss.withLEDs,"aw",%nobits
+ 946              		.align	1
+ 949              	withLEDs:
+ 950 0000 0000     		.space	2
+ 951              		.global	tempARR
+ 952              		.section	.bss.tempARR,"aw",%nobits
+ 955              	tempARR:
+ 956 0000 00       		.space	1
+ 957              		.global	stepperIndex
+ 958              		.section	.bss.stepperIndex,"aw",%nobits
+ 961              	stepperIndex:
+ 962 0000 00       		.space	1
+ 963              		.text
+ 964              	.Letext0:
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 24
+
+
+ 965              		.file 2 "c:\\users\\jesse arendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-vsco
+ 966              		.file 3 "c:\\users\\jesse arendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-vsco
+ 967              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 968              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 969              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 970              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 971              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 972              		.file 9 "Core/Inc/StepperMotor.h"
+ARM GAS  C:\Temp\ccGcFCPh.s 			page 25
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 StepperMotor.c
+  C:\Temp\ccGcFCPh.s:21     .text.HalfModeSequence:00000000 $t
+  C:\Temp\ccGcFCPh.s:27     .text.HalfModeSequence:00000000 HalfModeSequence
+  C:\Temp\ccGcFCPh.s:49     .text.HalfModeSequence:00000014 $d
+  C:\Temp\ccGcFCPh.s:57     .text.HalfModeSequence:0000001c $t
+  C:\Temp\ccGcFCPh.s:167    .text.HalfModeSequence:000000be $d
+  C:\Temp\ccGcFCPh.s:175    .text.HalfModeSequence:000000c6 $t
+  C:\Temp\ccGcFCPh.s:266    .text.HalfModeSequence:0000013c $d
+  C:\Temp\ccGcFCPh.s:961    .bss.stepperIndex:00000000 stepperIndex
+  C:\Temp\ccGcFCPh.s:949    .bss.withLEDs:00000000 withLEDs
+  C:\Temp\ccGcFCPh.s:274    .text.WaveModeSequence:00000000 $t
+  C:\Temp\ccGcFCPh.s:280    .text.WaveModeSequence:00000000 WaveModeSequence
+  C:\Temp\ccGcFCPh.s:302    .text.WaveModeSequence:00000014 $d
+  C:\Temp\ccGcFCPh.s:306    .text.WaveModeSequence:00000018 $t
+  C:\Temp\ccGcFCPh.s:401    .text.WaveModeSequence:000000ac $d
+  C:\Temp\ccGcFCPh.s:405    .text.WaveModeSequence:000000b0 $t
+  C:\Temp\ccGcFCPh.s:481    .text.WaveModeSequence:00000118 $d
+  C:\Temp\ccGcFCPh.s:489    .text.FullModeSequence:00000000 $t
+  C:\Temp\ccGcFCPh.s:495    .text.FullModeSequence:00000000 FullModeSequence
+  C:\Temp\ccGcFCPh.s:517    .text.FullModeSequence:00000014 $d
+  C:\Temp\ccGcFCPh.s:521    .text.FullModeSequence:00000018 $t
+  C:\Temp\ccGcFCPh.s:640    .text.FullModeSequence:000000de $d
+  C:\Temp\ccGcFCPh.s:644    .text.FullModeSequence:000000e2 $t
+  C:\Temp\ccGcFCPh.s:744    .text.FullModeSequence:00000174 $d
+  C:\Temp\ccGcFCPh.s:752    .text.setStepperSpeed:00000000 $t
+  C:\Temp\ccGcFCPh.s:758    .text.setStepperSpeed:00000000 setStepperSpeed
+  C:\Temp\ccGcFCPh.s:816    .text.setStepperSpeed:0000003c $d
+  C:\Temp\ccGcFCPh.s:942    .data.fullRevolution:00000000 fullRevolution
+  C:\Temp\ccGcFCPh.s:955    .bss.tempARR:00000000 tempARR
+  C:\Temp\ccGcFCPh.s:825    .text.init_StepperMotor:00000000 $t
+  C:\Temp\ccGcFCPh.s:831    .text.init_StepperMotor:00000000 init_StepperMotor
+  C:\Temp\ccGcFCPh.s:927    .text.init_StepperMotor:00000058 $d
+  C:\Temp\ccGcFCPh.s:939    .data.fullRevolution:00000000 $d
+  C:\Temp\ccGcFCPh.s:946    .bss.withLEDs:00000000 $d
+  C:\Temp\ccGcFCPh.s:956    .bss.tempARR:00000000 $d
+  C:\Temp\ccGcFCPh.s:962    .bss.stepperIndex:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+HAL_TIM_Base_Stop_IT
+htim4
+HAL_TIM_Base_Start_IT
+HAL_TIM_RegisterCallback

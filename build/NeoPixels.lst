@@ -1,0 +1,377 @@
+ARM GAS  C:\Temp\ccDhCOXe.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"NeoPixels.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/NeoPixels.c"
+  20              		.section	.text.send_PWM,"ax",%progbits
+  21              		.align	1
+  22              		.global	send_PWM
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	send_PWM:
+  28              	.LFB235:
+   1:Core/Src/NeoPixels.c **** //********************************************************************
+   2:Core/Src/NeoPixels.c **** //*                      Mech Educational Board                      *
+   3:Core/Src/NeoPixels.c **** //*                         Neo Pixels Library                       *
+   4:Core/Src/NeoPixels.c **** //*==================================================================*
+   5:Core/Src/NeoPixels.c **** //* @author:    Jesse Jabez Arendse                                  *
+   6:Core/Src/NeoPixels.c **** //* @date:      23-10-2023                                           *
+   7:Core/Src/NeoPixels.c **** //*==================================================================*
+   8:Core/Src/NeoPixels.c **** 
+   9:Core/Src/NeoPixels.c **** #include "main.h"
+  10:Core/Src/NeoPixels.c **** #include "NeoPixels.h"
+  11:Core/Src/NeoPixels.c **** 
+  12:Core/Src/NeoPixels.c **** extern TIM_HandleTypeDef htim2;
+  13:Core/Src/NeoPixels.c **** 
+  14:Core/Src/NeoPixels.c **** PixelRGB_t pixel[NUM_NEOPIXELS] = {0};
+  15:Core/Src/NeoPixels.c **** uint32_t dmaBuffer[DMA_BUFF_SIZE] = {0};
+  16:Core/Src/NeoPixels.c **** uint32_t *pBuff;
+  17:Core/Src/NeoPixels.c **** 
+  18:Core/Src/NeoPixels.c **** void send_PWM(void)
+  19:Core/Src/NeoPixels.c **** {
+  29              		.loc 1 19 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 08B5     		push	{r3, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+  20:Core/Src/NeoPixels.c ****     pBuff = dmaBuffer;
+  37              		.loc 1 20 5 view .LVU1
+  38              		.loc 1 20 11 is_stmt 0 view .LVU2
+ARM GAS  C:\Temp\ccDhCOXe.s 			page 2
+
+
+  39 0002 154B     		ldr	r3, .L11
+  40 0004 154A     		ldr	r2, .L11+4
+  41 0006 1A60     		str	r2, [r3]
+  21:Core/Src/NeoPixels.c ****     for (int i = 0; i < NUM_NEOPIXELS; i++)
+  42              		.loc 1 21 5 is_stmt 1 view .LVU3
+  43              	.LBB2:
+  44              		.loc 1 21 10 view .LVU4
+  45              	.LVL0:
+  46              		.loc 1 21 14 is_stmt 0 view .LVU5
+  47 0008 0020     		movs	r0, #0
+  48              		.loc 1 21 5 view .LVU6
+  49 000a 17E0     		b	.L2
+  50              	.LVL1:
+  51              	.L3:
+  52              	.LBB3:
+  22:Core/Src/NeoPixels.c ****     {
+  23:Core/Src/NeoPixels.c ****        for (int j = 23; j >= 0; j--)
+  24:Core/Src/NeoPixels.c ****        {
+  25:Core/Src/NeoPixels.c ****          if ((pixel[i].data >> j) & 0x01)
+  26:Core/Src/NeoPixels.c ****          {
+  27:Core/Src/NeoPixels.c ****            *pBuff = NEOPIXEL_ONE;
+  28:Core/Src/NeoPixels.c ****          }
+  29:Core/Src/NeoPixels.c ****          else
+  30:Core/Src/NeoPixels.c ****          {
+  31:Core/Src/NeoPixels.c ****            *pBuff = NEOPIXEL_ZERO;
+  53              		.loc 1 31 12 is_stmt 1 view .LVU7
+  54 000c 124A     		ldr	r2, .L11
+  55 000e 1268     		ldr	r2, [r2]
+  56              		.loc 1 31 19 is_stmt 0 view .LVU8
+  57 0010 2021     		movs	r1, #32
+  58 0012 1160     		str	r1, [r2]
+  59              	.L4:
+  32:Core/Src/NeoPixels.c ****          }
+  33:Core/Src/NeoPixels.c ****          pBuff++;
+  60              		.loc 1 33 10 is_stmt 1 discriminator 2 view .LVU9
+  61              		.loc 1 33 15 is_stmt 0 discriminator 2 view .LVU10
+  62 0014 1049     		ldr	r1, .L11
+  63 0016 0A68     		ldr	r2, [r1]
+  64 0018 0432     		adds	r2, r2, #4
+  65 001a 0A60     		str	r2, [r1]
+  23:Core/Src/NeoPixels.c ****        {
+  66              		.loc 1 23 34 is_stmt 1 discriminator 2 view .LVU11
+  67 001c 013B     		subs	r3, r3, #1
+  68              	.LVL2:
+  69              	.L6:
+  23:Core/Src/NeoPixels.c ****        {
+  70              		.loc 1 23 27 discriminator 1 view .LVU12
+  71 001e 002B     		cmp	r3, #0
+  72 0020 0BDB     		blt	.L9
+  25:Core/Src/NeoPixels.c ****          {
+  73              		.loc 1 25 10 view .LVU13
+  25:Core/Src/NeoPixels.c ****          {
+  74              		.loc 1 25 23 is_stmt 0 view .LVU14
+  75 0022 0F4A     		ldr	r2, .L11+8
+  76 0024 52F82020 		ldr	r2, [r2, r0, lsl #2]
+  25:Core/Src/NeoPixels.c ****          {
+  77              		.loc 1 25 29 view .LVU15
+ARM GAS  C:\Temp\ccDhCOXe.s 			page 3
+
+
+  78 0028 DA40     		lsrs	r2, r2, r3
+  25:Core/Src/NeoPixels.c ****          {
+  79              		.loc 1 25 13 view .LVU16
+  80 002a 12F0010F 		tst	r2, #1
+  81 002e EDD0     		beq	.L3
+  27:Core/Src/NeoPixels.c ****          }
+  82              		.loc 1 27 12 is_stmt 1 view .LVU17
+  83 0030 094A     		ldr	r2, .L11
+  84 0032 1268     		ldr	r2, [r2]
+  27:Core/Src/NeoPixels.c ****          }
+  85              		.loc 1 27 19 is_stmt 0 view .LVU18
+  86 0034 4421     		movs	r1, #68
+  87 0036 1160     		str	r1, [r2]
+  88 0038 ECE7     		b	.L4
+  89              	.L9:
+  27:Core/Src/NeoPixels.c ****          }
+  90              		.loc 1 27 19 view .LVU19
+  91              	.LBE3:
+  21:Core/Src/NeoPixels.c ****     {
+  92              		.loc 1 21 41 is_stmt 1 discriminator 2 view .LVU20
+  93 003a 0130     		adds	r0, r0, #1
+  94              	.LVL3:
+  95              	.L2:
+  21:Core/Src/NeoPixels.c ****     {
+  96              		.loc 1 21 23 discriminator 1 view .LVU21
+  97 003c 0328     		cmp	r0, #3
+  98 003e 01DC     		bgt	.L10
+  99              	.LBB4:
+  23:Core/Src/NeoPixels.c ****        {
+ 100              		.loc 1 23 17 is_stmt 0 view .LVU22
+ 101 0040 1723     		movs	r3, #23
+ 102 0042 ECE7     		b	.L6
+ 103              	.L10:
+ 104              	.LBE4:
+ 105              	.LBE2:
+  34:Core/Src/NeoPixels.c ****      }
+  35:Core/Src/NeoPixels.c ****     }
+  36:Core/Src/NeoPixels.c ****     dmaBuffer[DMA_BUFF_SIZE - 1] = 0; // last element must be 0
+ 106              		.loc 1 36 5 is_stmt 1 view .LVU23
+ 107              		.loc 1 36 34 is_stmt 0 view .LVU24
+ 108 0044 054A     		ldr	r2, .L11+4
+ 109 0046 0023     		movs	r3, #0
+ 110 0048 C2F88031 		str	r3, [r2, #384]
+  37:Core/Src/NeoPixels.c **** 
+  38:Core/Src/NeoPixels.c **** 
+  39:Core/Src/NeoPixels.c ****     HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_3, dmaBuffer, DMA_BUFF_SIZE);
+ 111              		.loc 1 39 5 is_stmt 1 view .LVU25
+ 112 004c 6123     		movs	r3, #97
+ 113 004e 0821     		movs	r1, #8
+ 114 0050 0448     		ldr	r0, .L11+12
+ 115              	.LVL4:
+ 116              		.loc 1 39 5 is_stmt 0 view .LVU26
+ 117 0052 FFF7FEFF 		bl	HAL_TIM_PWM_Start_DMA
+ 118              	.LVL5:
+  40:Core/Src/NeoPixels.c **** }
+ 119              		.loc 1 40 1 view .LVU27
+ 120 0056 08BD     		pop	{r3, pc}
+ARM GAS  C:\Temp\ccDhCOXe.s 			page 4
+
+
+ 121              	.L12:
+ 122              		.align	2
+ 123              	.L11:
+ 124 0058 00000000 		.word	pBuff
+ 125 005c 00000000 		.word	dmaBuffer
+ 126 0060 00000000 		.word	pixel
+ 127 0064 00000000 		.word	htim2
+ 128              		.cfi_endproc
+ 129              	.LFE235:
+ 131              		.section	.text.set_RGB,"ax",%progbits
+ 132              		.align	1
+ 133              		.global	set_RGB
+ 134              		.syntax unified
+ 135              		.thumb
+ 136              		.thumb_func
+ 138              	set_RGB:
+ 139              	.LVL6:
+ 140              	.LFB236:
+  41:Core/Src/NeoPixels.c **** 
+  42:Core/Src/NeoPixels.c **** 
+  43:Core/Src/NeoPixels.c **** 
+  44:Core/Src/NeoPixels.c **** void set_RGB(uint8_t r, uint8_t g, uint8_t b,uint8_t i)
+  45:Core/Src/NeoPixels.c **** {
+ 141              		.loc 1 45 1 is_stmt 1 view -0
+ 142              		.cfi_startproc
+ 143              		@ args = 0, pretend = 0, frame = 0
+ 144              		@ frame_needed = 0, uses_anonymous_args = 0
+ 145              		.loc 1 45 1 is_stmt 0 view .LVU29
+ 146 0000 38B5     		push	{r3, r4, r5, lr}
+ 147              		.cfi_def_cfa_offset 16
+ 148              		.cfi_offset 3, -16
+ 149              		.cfi_offset 4, -12
+ 150              		.cfi_offset 5, -8
+ 151              		.cfi_offset 14, -4
+  46:Core/Src/NeoPixels.c **** 		pixel[i].color.r = r*NEOPIXEL_MAX_BRIGHTNESS/255;
+ 152              		.loc 1 46 3 is_stmt 1 view .LVU30
+ 153              		.loc 1 46 23 is_stmt 0 view .LVU31
+ 154 0002 C0EB0010 		rsb	r0, r0, r0, lsl #4
+ 155              	.LVL7:
+ 156              		.loc 1 46 23 view .LVU32
+ 157 0006 4000     		lsls	r0, r0, #1
+ 158              		.loc 1 46 47 view .LVU33
+ 159 0008 124C     		ldr	r4, .L15
+ 160 000a 84FB00C5 		smull	ip, r5, r4, r0
+ 161 000e 0544     		add	r5, r5, r0
+ 162 0010 C017     		asrs	r0, r0, #31
+ 163 0012 C0EBE510 		rsb	r0, r0, r5, asr #7
+ 164              		.loc 1 46 20 view .LVU34
+ 165 0016 104D     		ldr	r5, .L15+4
+ 166 0018 05EB830C 		add	ip, r5, r3, lsl #2
+ 167 001c 8CF80100 		strb	r0, [ip, #1]
+  47:Core/Src/NeoPixels.c **** 		pixel[i].color.g = g*NEOPIXEL_MAX_BRIGHTNESS/255;
+ 168              		.loc 1 47 3 is_stmt 1 view .LVU35
+ 169              		.loc 1 47 23 is_stmt 0 view .LVU36
+ 170 0020 C1EB0111 		rsb	r1, r1, r1, lsl #4
+ 171              	.LVL8:
+ 172              		.loc 1 47 23 view .LVU37
+ARM GAS  C:\Temp\ccDhCOXe.s 			page 5
+
+
+ 173 0024 4900     		lsls	r1, r1, #1
+ 174              		.loc 1 47 47 view .LVU38
+ 175 0026 84FB01E0 		smull	lr, r0, r4, r1
+ 176 002a 0844     		add	r0, r0, r1
+ 177 002c C917     		asrs	r1, r1, #31
+ 178 002e C1EBE011 		rsb	r1, r1, r0, asr #7
+ 179              		.loc 1 47 20 view .LVU39
+ 180 0032 8CF80210 		strb	r1, [ip, #2]
+  48:Core/Src/NeoPixels.c **** 		pixel[i].color.b = b*NEOPIXEL_MAX_BRIGHTNESS/255;
+ 181              		.loc 1 48 3 is_stmt 1 view .LVU40
+ 182              		.loc 1 48 23 is_stmt 0 view .LVU41
+ 183 0036 C2EB0212 		rsb	r2, r2, r2, lsl #4
+ 184              	.LVL9:
+ 185              		.loc 1 48 23 view .LVU42
+ 186 003a 5200     		lsls	r2, r2, #1
+ 187              		.loc 1 48 47 view .LVU43
+ 188 003c 84FB0214 		smull	r1, r4, r4, r2
+ 189 0040 1444     		add	r4, r4, r2
+ 190 0042 D217     		asrs	r2, r2, #31
+ 191 0044 C2EBE412 		rsb	r2, r2, r4, asr #7
+ 192              		.loc 1 48 20 view .LVU44
+ 193 0048 05F82320 		strb	r2, [r5, r3, lsl #2]
+  49:Core/Src/NeoPixels.c **** 	
+  50:Core/Src/NeoPixels.c ****     send_PWM();
+ 194              		.loc 1 50 5 is_stmt 1 view .LVU45
+ 195 004c FFF7FEFF 		bl	send_PWM
+ 196              	.LVL10:
+  51:Core/Src/NeoPixels.c **** }
+ 197              		.loc 1 51 1 is_stmt 0 view .LVU46
+ 198 0050 38BD     		pop	{r3, r4, r5, pc}
+ 199              	.L16:
+ 200 0052 00BF     		.align	2
+ 201              	.L15:
+ 202 0054 81808080 		.word	-2139062143
+ 203 0058 00000000 		.word	pixel
+ 204              		.cfi_endproc
+ 205              	.LFE236:
+ 207              		.section	.text.HAL_TIM_PWM_PulseFinishedCallback,"ax",%progbits
+ 208              		.align	1
+ 209              		.global	HAL_TIM_PWM_PulseFinishedCallback
+ 210              		.syntax unified
+ 211              		.thumb
+ 212              		.thumb_func
+ 214              	HAL_TIM_PWM_PulseFinishedCallback:
+ 215              	.LVL11:
+ 216              	.LFB237:
+  52:Core/Src/NeoPixels.c **** 
+  53:Core/Src/NeoPixels.c **** void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
+  54:Core/Src/NeoPixels.c **** {
+ 217              		.loc 1 54 1 is_stmt 1 view -0
+ 218              		.cfi_startproc
+ 219              		@ args = 0, pretend = 0, frame = 0
+ 220              		@ frame_needed = 0, uses_anonymous_args = 0
+ 221              		.loc 1 54 1 is_stmt 0 view .LVU48
+ 222 0000 08B5     		push	{r3, lr}
+ 223              		.cfi_def_cfa_offset 8
+ 224              		.cfi_offset 3, -8
+ARM GAS  C:\Temp\ccDhCOXe.s 			page 6
+
+
+ 225              		.cfi_offset 14, -4
+  55:Core/Src/NeoPixels.c **** 	HAL_TIM_PWM_Stop_DMA(&htim2, TIM_CHANNEL_3);
+ 226              		.loc 1 55 2 is_stmt 1 view .LVU49
+ 227 0002 0821     		movs	r1, #8
+ 228 0004 0148     		ldr	r0, .L19
+ 229              	.LVL12:
+ 230              		.loc 1 55 2 is_stmt 0 view .LVU50
+ 231 0006 FFF7FEFF 		bl	HAL_TIM_PWM_Stop_DMA
+ 232              	.LVL13:
+  56:Core/Src/NeoPixels.c **** }...
+ 233              		.loc 1 56 1 view .LVU51
+ 234 000a 08BD     		pop	{r3, pc}
+ 235              	.L20:
+ 236              		.align	2
+ 237              	.L19:
+ 238 000c 00000000 		.word	htim2
+ 239              		.cfi_endproc
+ 240              	.LFE237:
+ 242              		.global	pBuff
+ 243              		.section	.bss.pBuff,"aw",%nobits
+ 244              		.align	2
+ 247              	pBuff:
+ 248 0000 00000000 		.space	4
+ 249              		.global	dmaBuffer
+ 250              		.section	.bss.dmaBuffer,"aw",%nobits
+ 251              		.align	2
+ 254              	dmaBuffer:
+ 255 0000 00000000 		.space	388
+ 255      00000000 
+ 255      00000000 
+ 255      00000000 
+ 255      00000000 
+ 256              		.global	pixel
+ 257              		.section	.bss.pixel,"aw",%nobits
+ 258              		.align	2
+ 261              	pixel:
+ 262 0000 00000000 		.space	16
+ 262      00000000 
+ 262      00000000 
+ 262      00000000 
+ 263              		.text
+ 264              	.Letext0:
+ 265              		.file 2 "c:\\users\\jesse arendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-vsco
+ 266              		.file 3 "c:\\users\\jesse arendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-vsco
+ 267              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 268              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 269              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 270              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 271              		.file 8 "Core/Inc/NeoPixels.h"
+ARM GAS  C:\Temp\ccDhCOXe.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 NeoPixels.c
+  C:\Temp\ccDhCOXe.s:21     .text.send_PWM:00000000 $t
+  C:\Temp\ccDhCOXe.s:27     .text.send_PWM:00000000 send_PWM
+  C:\Temp\ccDhCOXe.s:124    .text.send_PWM:00000058 $d
+  C:\Temp\ccDhCOXe.s:247    .bss.pBuff:00000000 pBuff
+  C:\Temp\ccDhCOXe.s:254    .bss.dmaBuffer:00000000 dmaBuffer
+  C:\Temp\ccDhCOXe.s:261    .bss.pixel:00000000 pixel
+  C:\Temp\ccDhCOXe.s:132    .text.set_RGB:00000000 $t
+  C:\Temp\ccDhCOXe.s:138    .text.set_RGB:00000000 set_RGB
+  C:\Temp\ccDhCOXe.s:202    .text.set_RGB:00000054 $d
+  C:\Temp\ccDhCOXe.s:208    .text.HAL_TIM_PWM_PulseFinishedCallback:00000000 $t
+  C:\Temp\ccDhCOXe.s:214    .text.HAL_TIM_PWM_PulseFinishedCallback:00000000 HAL_TIM_PWM_PulseFinishedCallback
+  C:\Temp\ccDhCOXe.s:238    .text.HAL_TIM_PWM_PulseFinishedCallback:0000000c $d
+  C:\Temp\ccDhCOXe.s:244    .bss.pBuff:00000000 $d
+  C:\Temp\ccDhCOXe.s:251    .bss.dmaBuffer:00000000 $d
+  C:\Temp\ccDhCOXe.s:258    .bss.pixel:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_TIM_PWM_Start_DMA
+htim2
+HAL_TIM_PWM_Stop_DMA
