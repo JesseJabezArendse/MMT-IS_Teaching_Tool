@@ -1,2 +1,4 @@
-# MTT-IS_Teaching_Tool
-Repository for MTT-IS Teaching Tool peripherals and examples.
+## MTT Simulink Library
+
+To get started, open example.slx with all other files and folders in this directory in your MATLAB workspace directory.
+You need the Embedded Coder add-on to use this libary.
