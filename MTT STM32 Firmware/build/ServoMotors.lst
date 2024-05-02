@@ -1,0 +1,415 @@
+ARM GAS  C:\Temp\ccGhNJhP.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"ServoMotors.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/ServoMotors.c"
+  20              		.section	.text.angleToCCR,"ax",%progbits
+  21              		.align	1
+  22              		.global	angleToCCR
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	angleToCCR:
+  28              	.LVL0:
+  29              	.LFB235:
+   1:Core/Src/ServoMotors.c **** //********************************************************************
+   2:Core/Src/ServoMotors.c **** //*                      Mech Educational Board                      *
+   3:Core/Src/ServoMotors.c **** //*                       Servo Motor Library                        *
+   4:Core/Src/ServoMotors.c **** //*==================================================================*
+   5:Core/Src/ServoMotors.c **** //* @author:    Jesse Jabez Arendse                                  *
+   6:Core/Src/ServoMotors.c **** //* @date:      20-11-2023                                           *
+   7:Core/Src/ServoMotors.c **** //*==================================================================*
+   8:Core/Src/ServoMotors.c **** 
+   9:Core/Src/ServoMotors.c **** #include "main.h"
+  10:Core/Src/ServoMotors.c **** #include "ServoMotors.h"
+  11:Core/Src/ServoMotors.c **** 
+  12:Core/Src/ServoMotors.c **** extern TIM_HandleTypeDef htim3;
+  13:Core/Src/ServoMotors.c **** 
+  14:Core/Src/ServoMotors.c **** int mainARR = 20000;
+  15:Core/Src/ServoMotors.c **** int maxAngle = 200;
+  16:Core/Src/ServoMotors.c **** int mainStartingTime = 0;
+  17:Core/Src/ServoMotors.c **** 
+  18:Core/Src/ServoMotors.c **** int angleToCCR(int angle) {
+  30              		.loc 1 18 27 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  19:Core/Src/ServoMotors.c ****     int outCCR = angle*10 + mainStartingTime;
+  35              		.loc 1 19 5 view .LVU1
+  36              		.loc 1 19 23 is_stmt 0 view .LVU2
+  37 0000 00EB8003 		add	r3, r0, r0, lsl #2
+  38              		.loc 1 19 27 view .LVU3
+  39 0004 074A     		ldr	r2, .L4
+ARM GAS  C:\Temp\ccGhNJhP.s 			page 2
+
+
+  40 0006 1068     		ldr	r0, [r2]
+  41              	.LVL1:
+  42              		.loc 1 19 9 view .LVU4
+  43 0008 00EB4303 		add	r3, r0, r3, lsl #1
+  44              	.LVL2:
+  20:Core/Src/ServoMotors.c ****     if (outCCR < mainStartingTime ){return mainStartingTime;}
+  45              		.loc 1 20 5 is_stmt 1 view .LVU5
+  46              		.loc 1 20 8 is_stmt 0 view .LVU6
+  47 000c 9842     		cmp	r0, r3
+  48 000e 08DC     		bgt	.L1
+  21:Core/Src/ServoMotors.c ****     else if (outCCR > (mainStartingTime + maxAngle*10)){return ( mainStartingTime + maxAngle*10);}
+  49              		.loc 1 21 10 is_stmt 1 view .LVU7
+  50              		.loc 1 21 51 is_stmt 0 view .LVU8
+  51 0010 054A     		ldr	r2, .L4+4
+  52 0012 1268     		ldr	r2, [r2]
+  53 0014 02EB8202 		add	r2, r2, r2, lsl #2
+  54              		.loc 1 21 41 view .LVU9
+  55 0018 00EB4200 		add	r0, r0, r2, lsl #1
+  56              		.loc 1 21 13 view .LVU10
+  57 001c 9842     		cmp	r0, r3
+  58 001e 00DB     		blt	.L1
+  22:Core/Src/ServoMotors.c ****     else return outCCR;
+  59              		.loc 1 22 17 view .LVU11
+  60 0020 1846     		mov	r0, r3
+  61              	.L1:
+  23:Core/Src/ServoMotors.c **** }
+  62              		.loc 1 23 1 view .LVU12
+  63 0022 7047     		bx	lr
+  64              	.L5:
+  65              		.align	2
+  66              	.L4:
+  67 0024 00000000 		.word	mainStartingTime
+  68 0028 00000000 		.word	maxAngle
+  69              		.cfi_endproc
+  70              	.LFE235:
+  72              		.section	.text.init_ServoMotor,"ax",%progbits
+  73              		.align	1
+  74              		.global	init_ServoMotor
+  75              		.syntax unified
+  76              		.thumb
+  77              		.thumb_func
+  79              	init_ServoMotor:
+  80              	.LVL3:
+  81              	.LFB236:
+  24:Core/Src/ServoMotors.c **** 
+  25:Core/Src/ServoMotors.c **** void init_ServoMotor( int servoNumber , int frequency , int angleRange , int startingTime){
+  82              		.loc 1 25 91 is_stmt 1 view -0
+  83              		.cfi_startproc
+  84              		@ args = 0, pretend = 0, frame = 0
+  85              		@ frame_needed = 0, uses_anonymous_args = 0
+  26:Core/Src/ServoMotors.c ****     if (frequency == SERVO_FREQUENCY_50  ){ //if suitable servo frequency, not accomodated for yet,
+  86              		.loc 1 26 5 view .LVU14
+  87              		.loc 1 26 8 is_stmt 0 view .LVU15
+  88 0000 3229     		cmp	r1, #50
+  89 0002 00D0     		beq	.L15
+  90 0004 7047     		bx	lr
+  91              	.L15:
+ARM GAS  C:\Temp\ccGhNJhP.s 			page 3
+
+
+  25:Core/Src/ServoMotors.c ****     if (frequency == SERVO_FREQUENCY_50  ){ //if suitable servo frequency, not accomodated for yet,
+  92              		.loc 1 25 91 view .LVU16
+  93 0006 10B5     		push	{r4, lr}
+  94              		.cfi_def_cfa_offset 8
+  95              		.cfi_offset 4, -8
+  96              		.cfi_offset 14, -4
+  97 0008 0446     		mov	r4, r0
+  27:Core/Src/ServoMotors.c **** 
+  28:Core/Src/ServoMotors.c ****         maxAngle = angleRange;
+  98              		.loc 1 28 9 is_stmt 1 view .LVU17
+  99              		.loc 1 28 18 is_stmt 0 view .LVU18
+ 100 000a 1249     		ldr	r1, .L20
+ 101              	.LVL4:
+ 102              		.loc 1 28 18 view .LVU19
+ 103 000c 0A60     		str	r2, [r1]
+  29:Core/Src/ServoMotors.c ****         mainStartingTime = startingTime*10;
+ 104              		.loc 1 29 9 is_stmt 1 view .LVU20
+ 105              		.loc 1 29 40 is_stmt 0 view .LVU21
+ 106 000e 03EB8303 		add	r3, r3, r3, lsl #2
+ 107              	.LVL5:
+ 108              		.loc 1 29 40 view .LVU22
+ 109 0012 5B00     		lsls	r3, r3, #1
+ 110              		.loc 1 29 26 view .LVU23
+ 111 0014 104A     		ldr	r2, .L20+4
+ 112              	.LVL6:
+ 113              		.loc 1 29 26 view .LVU24
+ 114 0016 1360     		str	r3, [r2]
+  30:Core/Src/ServoMotors.c **** 
+  31:Core/Src/ServoMotors.c ****         if (servoNumber == SERVO_M1){HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);}
+ 115              		.loc 1 31 9 is_stmt 1 view .LVU25
+ 116              		.loc 1 31 12 is_stmt 0 view .LVU26
+ 117 0018 0128     		cmp	r0, #1
+ 118 001a 06D0     		beq	.L16
+ 119              	.LVL7:
+ 120              	.L8:
+  32:Core/Src/ServoMotors.c ****         if (servoNumber == SERVO_M2){HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);}
+ 121              		.loc 1 32 9 is_stmt 1 view .LVU27
+ 122              		.loc 1 32 12 is_stmt 0 view .LVU28
+ 123 001c 022C     		cmp	r4, #2
+ 124 001e 09D0     		beq	.L17
+ 125              	.L9:
+  33:Core/Src/ServoMotors.c ****         if (servoNumber == SERVO_M3){HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);}
+ 126              		.loc 1 33 9 is_stmt 1 view .LVU29
+ 127              		.loc 1 33 12 is_stmt 0 view .LVU30
+ 128 0020 032C     		cmp	r4, #3
+ 129 0022 0CD0     		beq	.L18
+ 130              	.L10:
+  34:Core/Src/ServoMotors.c ****         if (servoNumber == SERVO_M4){HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);}
+ 131              		.loc 1 34 9 is_stmt 1 view .LVU31
+ 132              		.loc 1 34 12 is_stmt 0 view .LVU32
+ 133 0024 042C     		cmp	r4, #4
+ 134 0026 0FD0     		beq	.L19
+ 135              	.L6:
+  35:Core/Src/ServoMotors.c **** 
+  36:Core/Src/ServoMotors.c **** 
+  37:Core/Src/ServoMotors.c ****     }
+  38:Core/Src/ServoMotors.c ****     
+ARM GAS  C:\Temp\ccGhNJhP.s 			page 4
+
+
+  39:Core/Src/ServoMotors.c **** }
+ 136              		.loc 1 39 1 view .LVU33
+ 137 0028 10BD     		pop	{r4, pc}
+ 138              	.LVL8:
+ 139              	.L16:
+  31:Core/Src/ServoMotors.c ****         if (servoNumber == SERVO_M2){HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);}
+ 140              		.loc 1 31 38 is_stmt 1 discriminator 1 view .LVU34
+ 141 002a 0021     		movs	r1, #0
+  31:Core/Src/ServoMotors.c ****         if (servoNumber == SERVO_M2){HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);}
+ 142              		.loc 1 31 38 is_stmt 0 discriminator 1 view .LVU35
+ 143 002c 0B48     		ldr	r0, .L20+8
+ 144              	.LVL9:
+  31:Core/Src/ServoMotors.c ****         if (servoNumber == SERVO_M2){HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);}
+ 145              		.loc 1 31 38 discriminator 1 view .LVU36
+ 146 002e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 147              	.LVL10:
+  31:Core/Src/ServoMotors.c ****         if (servoNumber == SERVO_M2){HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);}
+ 148              		.loc 1 31 38 discriminator 1 view .LVU37
+ 149 0032 F3E7     		b	.L8
+ 150              	.L17:
+  32:Core/Src/ServoMotors.c ****         if (servoNumber == SERVO_M3){HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);}
+ 151              		.loc 1 32 38 is_stmt 1 discriminator 1 view .LVU38
+ 152 0034 0421     		movs	r1, #4
+ 153 0036 0948     		ldr	r0, .L20+8
+ 154 0038 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 155              	.LVL11:
+ 156 003c F0E7     		b	.L9
+ 157              	.L18:
+  33:Core/Src/ServoMotors.c ****         if (servoNumber == SERVO_M4){HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);}
+ 158              		.loc 1 33 38 discriminator 1 view .LVU39
+ 159 003e 0821     		movs	r1, #8
+ 160 0040 0648     		ldr	r0, .L20+8
+ 161 0042 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 162              	.LVL12:
+ 163 0046 EDE7     		b	.L10
+ 164              	.L19:
+  34:Core/Src/ServoMotors.c **** 
+ 165              		.loc 1 34 38 discriminator 1 view .LVU40
+ 166 0048 0C21     		movs	r1, #12
+ 167 004a 0448     		ldr	r0, .L20+8
+ 168 004c FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 169              	.LVL13:
+ 170              		.loc 1 39 1 is_stmt 0 discriminator 1 view .LVU41
+ 171 0050 EAE7     		b	.L6
+ 172              	.L21:
+ 173 0052 00BF     		.align	2
+ 174              	.L20:
+ 175 0054 00000000 		.word	maxAngle
+ 176 0058 00000000 		.word	mainStartingTime
+ 177 005c 00000000 		.word	htim3
+ 178              		.cfi_endproc
+ 179              	.LFE236:
+ 181              		.section	.text.setServoAngle,"ax",%progbits
+ 182              		.align	1
+ 183              		.global	setServoAngle
+ 184              		.syntax unified
+ 185              		.thumb
+ARM GAS  C:\Temp\ccGhNJhP.s 			page 5
+
+
+ 186              		.thumb_func
+ 188              	setServoAngle:
+ 189              	.LVL14:
+ 190              	.LFB237:
+  40:Core/Src/ServoMotors.c **** 
+  41:Core/Src/ServoMotors.c **** void setServoAngle(int servoNumber , int angle){
+ 191              		.loc 1 41 48 is_stmt 1 view -0
+ 192              		.cfi_startproc
+ 193              		@ args = 0, pretend = 0, frame = 0
+ 194              		@ frame_needed = 0, uses_anonymous_args = 0
+ 195              		.loc 1 41 48 is_stmt 0 view .LVU43
+ 196 0000 38B5     		push	{r3, r4, r5, lr}
+ 197              		.cfi_def_cfa_offset 16
+ 198              		.cfi_offset 3, -16
+ 199              		.cfi_offset 4, -12
+ 200              		.cfi_offset 5, -8
+ 201              		.cfi_offset 14, -4
+ 202 0002 0446     		mov	r4, r0
+ 203 0004 0D46     		mov	r5, r1
+  42:Core/Src/ServoMotors.c ****     if (servoNumber == SERVO_M1){
+ 204              		.loc 1 42 5 is_stmt 1 view .LVU44
+ 205              		.loc 1 42 8 is_stmt 0 view .LVU45
+ 206 0006 0128     		cmp	r0, #1
+ 207 0008 06D0     		beq	.L28
+ 208              	.LVL15:
+ 209              	.L23:
+  43:Core/Src/ServoMotors.c ****         TIM3 -> CCR1 = angleToCCR(angle);
+  44:Core/Src/ServoMotors.c ****     }
+  45:Core/Src/ServoMotors.c ****     if (servoNumber == SERVO_M2){
+ 210              		.loc 1 45 5 is_stmt 1 view .LVU46
+ 211              		.loc 1 45 8 is_stmt 0 view .LVU47
+ 212 000a 022C     		cmp	r4, #2
+ 213 000c 0AD0     		beq	.L29
+ 214              	.L24:
+  46:Core/Src/ServoMotors.c ****         TIM3 -> CCR2 = angleToCCR(angle);
+  47:Core/Src/ServoMotors.c ****     }
+  48:Core/Src/ServoMotors.c ****     if (servoNumber == SERVO_M3){
+ 215              		.loc 1 48 5 is_stmt 1 view .LVU48
+ 216              		.loc 1 48 8 is_stmt 0 view .LVU49
+ 217 000e 032C     		cmp	r4, #3
+ 218 0010 0ED0     		beq	.L30
+ 219              	.L25:
+  49:Core/Src/ServoMotors.c ****         TIM3 -> CCR3 = angleToCCR(angle);
+  50:Core/Src/ServoMotors.c ****     }
+  51:Core/Src/ServoMotors.c ****     if (servoNumber == SERVO_M4){
+ 220              		.loc 1 51 5 is_stmt 1 view .LVU50
+ 221              		.loc 1 51 8 is_stmt 0 view .LVU51
+ 222 0012 042C     		cmp	r4, #4
+ 223 0014 12D0     		beq	.L31
+ 224              	.L22:
+  52:Core/Src/ServoMotors.c ****         TIM3 -> CCR4 = angleToCCR(angle);
+  53:Core/Src/ServoMotors.c ****     }
+  54:Core/Src/ServoMotors.c ****     
+  55:Core/Src/ServoMotors.c **** }...
+ 225              		.loc 1 55 1 view .LVU52
+ 226 0016 38BD     		pop	{r3, r4, r5, pc}
+ 227              	.LVL16:
+ARM GAS  C:\Temp\ccGhNJhP.s 			page 6
+
+
+ 228              	.L28:
+  43:Core/Src/ServoMotors.c ****         TIM3 -> CCR1 = angleToCCR(angle);
+ 229              		.loc 1 43 9 is_stmt 1 view .LVU53
+  43:Core/Src/ServoMotors.c ****         TIM3 -> CCR1 = angleToCCR(angle);
+ 230              		.loc 1 43 24 is_stmt 0 view .LVU54
+ 231 0018 0846     		mov	r0, r1
+ 232              	.LVL17:
+  43:Core/Src/ServoMotors.c ****         TIM3 -> CCR1 = angleToCCR(angle);
+ 233              		.loc 1 43 24 view .LVU55
+ 234 001a FFF7FEFF 		bl	angleToCCR
+ 235              	.LVL18:
+  43:Core/Src/ServoMotors.c ****         TIM3 -> CCR1 = angleToCCR(angle);
+ 236              		.loc 1 43 22 view .LVU56
+ 237 001e 0A4B     		ldr	r3, .L32
+ 238 0020 5863     		str	r0, [r3, #52]
+ 239 0022 F2E7     		b	.L23
+ 240              	.L29:
+  46:Core/Src/ServoMotors.c ****         TIM3 -> CCR2 = angleToCCR(angle);
+ 241              		.loc 1 46 9 is_stmt 1 view .LVU57
+  46:Core/Src/ServoMotors.c ****         TIM3 -> CCR2 = angleToCCR(angle);
+ 242              		.loc 1 46 24 is_stmt 0 view .LVU58
+ 243 0024 2846     		mov	r0, r5
+ 244 0026 FFF7FEFF 		bl	angleToCCR
+ 245              	.LVL19:
+  46:Core/Src/ServoMotors.c ****         TIM3 -> CCR2 = angleToCCR(angle);
+ 246              		.loc 1 46 22 view .LVU59
+ 247 002a 074B     		ldr	r3, .L32
+ 248 002c 9863     		str	r0, [r3, #56]
+ 249 002e EEE7     		b	.L24
+ 250              	.L30:
+  49:Core/Src/ServoMotors.c ****         TIM3 -> CCR3 = angleToCCR(angle);
+ 251              		.loc 1 49 9 is_stmt 1 view .LVU60
+  49:Core/Src/ServoMotors.c ****         TIM3 -> CCR3 = angleToCCR(angle);
+ 252              		.loc 1 49 24 is_stmt 0 view .LVU61
+ 253 0030 2846     		mov	r0, r5
+ 254 0032 FFF7FEFF 		bl	angleToCCR
+ 255              	.LVL20:
+  49:Core/Src/ServoMotors.c ****         TIM3 -> CCR3 = angleToCCR(angle);
+ 256              		.loc 1 49 22 view .LVU62
+ 257 0036 044B     		ldr	r3, .L32
+ 258 0038 D863     		str	r0, [r3, #60]
+ 259 003a EAE7     		b	.L25
+ 260              	.L31:
+  52:Core/Src/ServoMotors.c ****         TIM3 -> CCR4 = angleToCCR(angle);
+ 261              		.loc 1 52 9 is_stmt 1 view .LVU63
+  52:Core/Src/ServoMotors.c ****         TIM3 -> CCR4 = angleToCCR(angle);
+ 262              		.loc 1 52 24 is_stmt 0 view .LVU64
+ 263 003c 2846     		mov	r0, r5
+ 264 003e FFF7FEFF 		bl	angleToCCR
+ 265              	.LVL21:
+  52:Core/Src/ServoMotors.c ****         TIM3 -> CCR4 = angleToCCR(angle);
+ 266              		.loc 1 52 22 view .LVU65
+ 267 0042 014B     		ldr	r3, .L32
+ 268 0044 1864     		str	r0, [r3, #64]
+ 269              		.loc 1 55 1 view .LVU66
+ 270 0046 E6E7     		b	.L22
+ 271              	.L33:
+ARM GAS  C:\Temp\ccGhNJhP.s 			page 7
+
+
+ 272              		.align	2
+ 273              	.L32:
+ 274 0048 00040040 		.word	1073742848
+ 275              		.cfi_endproc
+ 276              	.LFE237:
+ 278              		.global	mainStartingTime
+ 279              		.section	.bss.mainStartingTime,"aw",%nobits
+ 280              		.align	2
+ 283              	mainStartingTime:
+ 284 0000 00000000 		.space	4
+ 285              		.global	maxAngle
+ 286              		.section	.data.maxAngle,"aw"
+ 287              		.align	2
+ 290              	maxAngle:
+ 291 0000 C8000000 		.word	200
+ 292              		.global	mainARR
+ 293              		.section	.data.mainARR,"aw"
+ 294              		.align	2
+ 297              	mainARR:
+ 298 0000 204E0000 		.word	20000
+ 299              		.text
+ 300              	.Letext0:
+ 301              		.file 2 "c:\\users\\jessejabezarendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-
+ 302              		.file 3 "c:\\users\\jessejabezarendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-
+ 303              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 304              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 305              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 306              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ARM GAS  C:\Temp\ccGhNJhP.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 ServoMotors.c
+  C:\Temp\ccGhNJhP.s:21     .text.angleToCCR:00000000 $t
+  C:\Temp\ccGhNJhP.s:27     .text.angleToCCR:00000000 angleToCCR
+  C:\Temp\ccGhNJhP.s:67     .text.angleToCCR:00000024 $d
+  C:\Temp\ccGhNJhP.s:283    .bss.mainStartingTime:00000000 mainStartingTime
+  C:\Temp\ccGhNJhP.s:290    .data.maxAngle:00000000 maxAngle
+  C:\Temp\ccGhNJhP.s:73     .text.init_ServoMotor:00000000 $t
+  C:\Temp\ccGhNJhP.s:79     .text.init_ServoMotor:00000000 init_ServoMotor
+  C:\Temp\ccGhNJhP.s:175    .text.init_ServoMotor:00000054 $d
+  C:\Temp\ccGhNJhP.s:182    .text.setServoAngle:00000000 $t
+  C:\Temp\ccGhNJhP.s:188    .text.setServoAngle:00000000 setServoAngle
+  C:\Temp\ccGhNJhP.s:274    .text.setServoAngle:00000048 $d
+  C:\Temp\ccGhNJhP.s:280    .bss.mainStartingTime:00000000 $d
+  C:\Temp\ccGhNJhP.s:287    .data.maxAngle:00000000 $d
+  C:\Temp\ccGhNJhP.s:297    .data.mainARR:00000000 mainARR
+  C:\Temp\ccGhNJhP.s:294    .data.mainARR:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_TIM_PWM_Start
+htim3

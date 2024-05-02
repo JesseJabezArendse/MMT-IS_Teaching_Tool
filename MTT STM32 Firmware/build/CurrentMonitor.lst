@@ -1,0 +1,1180 @@
+ARM GAS  C:\Temp\ccULnshv.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"CurrentMonitor.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/CurrentMonitor.c"
+  20              		.section	.text.WriteMem,"ax",%progbits
+  21              		.align	1
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	WriteMem:
+  27              	.LVL0:
+  28              	.LFB235:
+   1:Core/Src/CurrentMonitor.c **** //********************************************************************
+   2:Core/Src/CurrentMonitor.c **** //*                      Mech Educational Board                      *
+   3:Core/Src/CurrentMonitor.c **** //*                     Current Monitors Library                     *
+   4:Core/Src/CurrentMonitor.c **** //*==================================================================*
+   5:Core/Src/CurrentMonitor.c **** //* @author:    Jesse Jabez Arendse                                  *
+   6:Core/Src/CurrentMonitor.c **** //* @date:      24-10-2023                                           *
+   7:Core/Src/CurrentMonitor.c **** //*==================================================================*
+   8:Core/Src/CurrentMonitor.c **** 
+   9:Core/Src/CurrentMonitor.c **** #include "main.h"
+  10:Core/Src/CurrentMonitor.c **** #include "CurrentMonitor.h"
+  11:Core/Src/CurrentMonitor.c **** 
+  12:Core/Src/CurrentMonitor.c **** extern I2C_HandleTypeDef hi2c1; 														//change this to whichever one you're using
+  13:Core/Src/CurrentMonitor.c **** extern TIM_HandleTypeDef htim14; //to reference htim14 from main.c
+  14:Core/Src/CurrentMonitor.c **** 
+  15:Core/Src/CurrentMonitor.c **** extern volatile int16_t CurrentMonitor_Barrel[2];
+  16:Core/Src/CurrentMonitor.c **** extern volatile int16_t CurrentMonitor_Servo[2];
+  17:Core/Src/CurrentMonitor.c **** extern volatile int16_t CurrentMonitor_Stepper[2];
+  18:Core/Src/CurrentMonitor.c **** 
+  19:Core/Src/CurrentMonitor.c **** 
+  20:Core/Src/CurrentMonitor.c **** uint16_t vbus, vshunt, current, power;
+  21:Core/Src/CurrentMonitor.c **** 
+  22:Core/Src/CurrentMonitor.c **** //custom since INA219 Mem is 2x 8-bit
+  23:Core/Src/CurrentMonitor.c **** static void WriteMem(uint8_t devAddress, uint8_t RegisterAddress, uint16_t Value)
+  24:Core/Src/CurrentMonitor.c **** {
+  29              		.loc 1 24 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 8
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 24 1 is_stmt 0 view .LVU1
+  34 0000 00B5     		push	{lr}
+ARM GAS  C:\Temp\ccULnshv.s 			page 2
+
+
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 14, -4
+  37 0002 87B0     		sub	sp, sp, #28
+  38              		.cfi_def_cfa_offset 32
+  25:Core/Src/CurrentMonitor.c **** 	uint8_t addr[2];
+  39              		.loc 1 25 2 is_stmt 1 view .LVU2
+  26:Core/Src/CurrentMonitor.c **** 	addr[0] = (Value >> 8) & 0xff;  // upper byte
+  40              		.loc 1 26 2 view .LVU3
+  41              		.loc 1 26 10 is_stmt 0 view .LVU4
+  42 0004 130A     		lsrs	r3, r2, #8
+  43 0006 8DF81430 		strb	r3, [sp, #20]
+  27:Core/Src/CurrentMonitor.c **** 	addr[1] = (Value >> 0) & 0xff; // lower byte
+  44              		.loc 1 27 2 is_stmt 1 view .LVU5
+  45              		.loc 1 27 10 is_stmt 0 view .LVU6
+  46 000a 8DF81520 		strb	r2, [sp, #21]
+  28:Core/Src/CurrentMonitor.c **** 	HAL_I2C_Mem_Write(&hi2c1, (devAddress<<1)+0, RegisterAddress, 1, (uint8_t*)addr, 2, 10);
+  47              		.loc 1 28 2 is_stmt 1 view .LVU7
+  48 000e 0A23     		movs	r3, #10
+  49 0010 0293     		str	r3, [sp, #8]
+  50 0012 0223     		movs	r3, #2
+  51 0014 0193     		str	r3, [sp, #4]
+  52 0016 05AB     		add	r3, sp, #20
+  53 0018 0093     		str	r3, [sp]
+  54 001a 0123     		movs	r3, #1
+  55 001c 0A46     		mov	r2, r1
+  56              	.LVL1:
+  57              		.loc 1 28 2 is_stmt 0 view .LVU8
+  58 001e 00FA03F1 		lsl	r1, r0, r3
+  59              	.LVL2:
+  60              		.loc 1 28 2 view .LVU9
+  61 0022 0348     		ldr	r0, .L3
+  62              	.LVL3:
+  63              		.loc 1 28 2 view .LVU10
+  64 0024 FFF7FEFF 		bl	HAL_I2C_Mem_Write
+  65              	.LVL4:
+  29:Core/Src/CurrentMonitor.c **** }
+  66              		.loc 1 29 1 view .LVU11
+  67 0028 07B0     		add	sp, sp, #28
+  68              		.cfi_def_cfa_offset 4
+  69              		@ sp needed
+  70 002a 5DF804FB 		ldr	pc, [sp], #4
+  71              	.L4:
+  72 002e 00BF     		.align	2
+  73              	.L3:
+  74 0030 00000000 		.word	hi2c1
+  75              		.cfi_endproc
+  76              	.LFE235:
+  78              		.section	.text.ReadMem,"ax",%progbits
+  79              		.align	1
+  80              		.syntax unified
+  81              		.thumb
+  82              		.thumb_func
+  84              	ReadMem:
+  85              	.LVL5:
+  86              	.LFB236:
+  30:Core/Src/CurrentMonitor.c **** 
+  31:Core/Src/CurrentMonitor.c **** static uint16_t ReadMem(uint8_t devAddress, uint8_t RegisterAddress)
+ARM GAS  C:\Temp\ccULnshv.s 			page 3
+
+
+  32:Core/Src/CurrentMonitor.c **** {
+  87              		.loc 1 32 1 is_stmt 1 view -0
+  88              		.cfi_startproc
+  89              		@ args = 0, pretend = 0, frame = 8
+  90              		@ frame_needed = 0, uses_anonymous_args = 0
+  91              		.loc 1 32 1 is_stmt 0 view .LVU13
+  92 0000 00B5     		push	{lr}
+  93              		.cfi_def_cfa_offset 4
+  94              		.cfi_offset 14, -4
+  95 0002 87B0     		sub	sp, sp, #28
+  96              		.cfi_def_cfa_offset 32
+  97 0004 0A46     		mov	r2, r1
+  33:Core/Src/CurrentMonitor.c **** 	uint8_t Value[2];
+  98              		.loc 1 33 2 is_stmt 1 view .LVU14
+  34:Core/Src/CurrentMonitor.c **** 
+  35:Core/Src/CurrentMonitor.c **** 	HAL_I2C_Mem_Read(&hi2c1, (devAddress<<1)+1, RegisterAddress, 1, Value, 2, 10);
+  99              		.loc 1 35 2 view .LVU15
+ 100              		.loc 1 35 38 is_stmt 0 view .LVU16
+ 101 0006 4000     		lsls	r0, r0, #1
+ 102              	.LVL6:
+ 103              		.loc 1 35 2 view .LVU17
+ 104 0008 0A23     		movs	r3, #10
+ 105 000a 0293     		str	r3, [sp, #8]
+ 106 000c 0223     		movs	r3, #2
+ 107 000e 0193     		str	r3, [sp, #4]
+ 108 0010 05AB     		add	r3, sp, #20
+ 109 0012 0093     		str	r3, [sp]
+ 110 0014 0123     		movs	r3, #1
+ 111 0016 C118     		adds	r1, r0, r3
+ 112              	.LVL7:
+ 113              		.loc 1 35 2 view .LVU18
+ 114 0018 0548     		ldr	r0, .L7
+ 115 001a FFF7FEFF 		bl	HAL_I2C_Mem_Read
+ 116              	.LVL8:
+  36:Core/Src/CurrentMonitor.c **** 
+  37:Core/Src/CurrentMonitor.c **** 	return ((Value[0] << 8) | Value[1]);
+ 117              		.loc 1 37 2 is_stmt 1 view .LVU19
+ 118              		.loc 1 37 16 is_stmt 0 view .LVU20
+ 119 001e 9DF81400 		ldrb	r0, [sp, #20]	@ zero_extendqisi2
+ 120              		.loc 1 37 33 view .LVU21
+ 121 0022 9DF81530 		ldrb	r3, [sp, #21]	@ zero_extendqisi2
+  38:Core/Src/CurrentMonitor.c **** }
+ 122              		.loc 1 38 1 view .LVU22
+ 123 0026 43EA0020 		orr	r0, r3, r0, lsl #8
+ 124 002a 07B0     		add	sp, sp, #28
+ 125              		.cfi_def_cfa_offset 4
+ 126              		@ sp needed
+ 127 002c 5DF804FB 		ldr	pc, [sp], #4
+ 128              	.L8:
+ 129              		.align	2
+ 130              	.L7:
+ 131 0030 00000000 		.word	hi2c1
+ 132              		.cfi_endproc
+ 133              	.LFE236:
+ 135              		.section	.text.calibrate,"ax",%progbits
+ 136              		.align	1
+ 137              		.global	calibrate
+ARM GAS  C:\Temp\ccULnshv.s 			page 4
+
+
+ 138              		.syntax unified
+ 139              		.thumb
+ 140              		.thumb_func
+ 142              	calibrate:
+ 143              	.LVL9:
+ 144              	.LFB237:
+  39:Core/Src/CurrentMonitor.c **** 
+  40:Core/Src/CurrentMonitor.c **** void calibrate(uint8_t devAddress , uint16_t calRegister){                              //this is f
+ 145              		.loc 1 40 58 is_stmt 1 view -0
+ 146              		.cfi_startproc
+ 147              		@ args = 0, pretend = 0, frame = 0
+ 148              		@ frame_needed = 0, uses_anonymous_args = 0
+ 149              		.loc 1 40 58 is_stmt 0 view .LVU24
+ 150 0000 08B5     		push	{r3, lr}
+ 151              		.cfi_def_cfa_offset 8
+ 152              		.cfi_offset 3, -8
+ 153              		.cfi_offset 14, -4
+ 154 0002 0A46     		mov	r2, r1
+  41:Core/Src/CurrentMonitor.c ****     WriteMem(devAddress, SENSOR_CALBRATION_MEM_ADDR, calRegister);                      
+ 155              		.loc 1 41 5 is_stmt 1 view .LVU25
+ 156 0004 0521     		movs	r1, #5
+ 157              	.LVL10:
+ 158              		.loc 1 41 5 is_stmt 0 view .LVU26
+ 159 0006 FFF7FEFF 		bl	WriteMem
+ 160              	.LVL11:
+  42:Core/Src/CurrentMonitor.c **** }
+ 161              		.loc 1 42 1 view .LVU27
+ 162 000a 08BD     		pop	{r3, pc}
+ 163              		.cfi_endproc
+ 164              	.LFE237:
+ 166              		.section	.text.signNumber16,"ax",%progbits
+ 167              		.align	1
+ 168              		.global	signNumber16
+ 169              		.syntax unified
+ 170              		.thumb
+ 171              		.thumb_func
+ 173              	signNumber16:
+ 174              	.LVL12:
+ 175              	.LFB238:
+  43:Core/Src/CurrentMonitor.c **** 
+  44:Core/Src/CurrentMonitor.c **** int16_t signNumber16(uint16_t unsignedValue){
+ 176              		.loc 1 44 45 is_stmt 1 view -0
+ 177              		.cfi_startproc
+ 178              		@ args = 0, pretend = 0, frame = 0
+ 179              		@ frame_needed = 0, uses_anonymous_args = 0
+ 180              		@ link register save eliminated.
+  45:Core/Src/CurrentMonitor.c **** 	int16_t signedValue;
+ 181              		.loc 1 45 2 view .LVU29
+  46:Core/Src/CurrentMonitor.c **** 
+  47:Core/Src/CurrentMonitor.c **** 	if (unsignedValue <= INT16_MAX) {
+ 182              		.loc 1 47 2 view .LVU30
+  48:Core/Src/CurrentMonitor.c ****         signedValue = (int16_t)unsignedValue; // No change needed, it fits in the signed range.
+  49:Core/Src/CurrentMonitor.c ****     } else {
+  50:Core/Src/CurrentMonitor.c ****         signedValue = -((int16_t)(UINT16_MAX - unsignedValue + 1));
+  51:Core/Src/CurrentMonitor.c ****     }
+  52:Core/Src/CurrentMonitor.c **** 
+  53:Core/Src/CurrentMonitor.c **** 	return signedValue;
+ARM GAS  C:\Temp\ccULnshv.s 			page 5
+
+
+ 183              		.loc 1 53 2 view .LVU31
+  54:Core/Src/CurrentMonitor.c **** }
+ 184              		.loc 1 54 1 is_stmt 0 view .LVU32
+ 185 0000 00B2     		sxth	r0, r0
+ 186              		.loc 1 54 1 view .LVU33
+ 187 0002 7047     		bx	lr
+ 188              		.cfi_endproc
+ 189              	.LFE238:
+ 191              		.section	.text.toBusVoltage,"ax",%progbits
+ 192              		.align	1
+ 193              		.global	toBusVoltage
+ 194              		.syntax unified
+ 195              		.thumb
+ 196              		.thumb_func
+ 198              	toBusVoltage:
+ 199              	.LVL13:
+ 200              	.LFB239:
+  55:Core/Src/CurrentMonitor.c **** 
+  56:Core/Src/CurrentMonitor.c **** int16_t toBusVoltage(uint16_t regValue)
+  57:Core/Src/CurrentMonitor.c **** {
+ 201              		.loc 1 57 1 is_stmt 1 view -0
+ 202              		.cfi_startproc
+ 203              		@ args = 0, pretend = 0, frame = 0
+ 204              		@ frame_needed = 0, uses_anonymous_args = 0
+ 205              		@ link register save eliminated.
+  58:Core/Src/CurrentMonitor.c **** 	return ((regValue >> 3  ) * 4);
+ 206              		.loc 1 58 2 view .LVU35
+ 207              		.loc 1 58 28 is_stmt 0 view .LVU36
+ 208 0000 C008     		lsrs	r0, r0, #3
+ 209              	.LVL14:
+  59:Core/Src/CurrentMonitor.c **** 
+  60:Core/Src/CurrentMonitor.c **** }
+ 210              		.loc 1 60 1 view .LVU37
+ 211 0002 8000     		lsls	r0, r0, #2
+ 212 0004 7047     		bx	lr
+ 213              		.cfi_endproc
+ 214              	.LFE239:
+ 216              		.section	.text.toCurrent_raw,"ax",%progbits
+ 217              		.align	1
+ 218              		.global	toCurrent_raw
+ 219              		.syntax unified
+ 220              		.thumb
+ 221              		.thumb_func
+ 223              	toCurrent_raw:
+ 224              	.LVL15:
+ 225              	.LFB240:
+  61:Core/Src/CurrentMonitor.c **** 
+  62:Core/Src/CurrentMonitor.c **** int16_t toCurrent_raw(uint16_t regValue)
+  63:Core/Src/CurrentMonitor.c **** {
+ 226              		.loc 1 63 1 is_stmt 1 view -0
+ 227              		.cfi_startproc
+ 228              		@ args = 0, pretend = 0, frame = 0
+ 229              		@ frame_needed = 0, uses_anonymous_args = 0
+ 230              		@ link register save eliminated.
+  64:Core/Src/CurrentMonitor.c **** 	return (regValue-30*25);
+ 231              		.loc 1 64 2 view .LVU39
+ 232              		.loc 1 64 18 is_stmt 0 view .LVU40
+ARM GAS  C:\Temp\ccULnshv.s 			page 6
+
+
+ 233 0000 A0F2EE20 		subw	r0, r0, #750
+ 234              	.LVL16:
+  65:Core/Src/CurrentMonitor.c **** }
+ 235              		.loc 1 65 1 view .LVU41
+ 236 0004 00B2     		sxth	r0, r0
+ 237 0006 7047     		bx	lr
+ 238              		.cfi_endproc
+ 239              	.LFE240:
+ 241              		.section	.text.toCurrent,"ax",%progbits
+ 242              		.align	1
+ 243              		.global	toCurrent
+ 244              		.syntax unified
+ 245              		.thumb
+ 246              		.thumb_func
+ 248              	toCurrent:
+ 249              	.LVL17:
+ 250              	.LFB241:
+  66:Core/Src/CurrentMonitor.c **** 
+  67:Core/Src/CurrentMonitor.c **** int16_t toCurrent(uint16_t regValue)
+  68:Core/Src/CurrentMonitor.c **** {
+ 251              		.loc 1 68 1 is_stmt 1 view -0
+ 252              		.cfi_startproc
+ 253              		@ args = 0, pretend = 0, frame = 0
+ 254              		@ frame_needed = 0, uses_anonymous_args = 0
+ 255              		.loc 1 68 1 is_stmt 0 view .LVU43
+ 256 0000 08B5     		push	{r3, lr}
+ 257              		.cfi_def_cfa_offset 8
+ 258              		.cfi_offset 3, -8
+ 259              		.cfi_offset 14, -4
+  69:Core/Src/CurrentMonitor.c **** 	int16_t result = toCurrent_raw(regValue);
+ 260              		.loc 1 69 2 is_stmt 1 view .LVU44
+ 261              		.loc 1 69 19 is_stmt 0 view .LVU45
+ 262 0002 FFF7FEFF 		bl	toCurrent_raw
+ 263              	.LVL18:
+  70:Core/Src/CurrentMonitor.c **** 
+  71:Core/Src/CurrentMonitor.c **** 	return (result /25 );
+ 264              		.loc 1 71 2 is_stmt 1 view .LVU46
+ 265              		.loc 1 71 17 is_stmt 0 view .LVU47
+ 266 0006 044B     		ldr	r3, .L16
+ 267 0008 83FB0023 		smull	r2, r3, r3, r0
+ 268 000c C017     		asrs	r0, r0, #31
+ 269              	.LVL19:
+ 270              		.loc 1 71 17 view .LVU48
+ 271 000e C0EBE300 		rsb	r0, r0, r3, asr #3
+  72:Core/Src/CurrentMonitor.c **** }
+ 272              		.loc 1 72 1 view .LVU49
+ 273 0012 00B2     		sxth	r0, r0
+ 274 0014 08BD     		pop	{r3, pc}
+ 275              	.L17:
+ 276 0016 00BF     		.align	2
+ 277              	.L16:
+ 278 0018 1F85EB51 		.word	1374389535
+ 279              		.cfi_endproc
+ 280              	.LFE241:
+ 282              		.section	.text.toShuntVolage,"ax",%progbits
+ 283              		.align	1
+ 284              		.global	toShuntVolage
+ARM GAS  C:\Temp\ccULnshv.s 			page 7
+
+
+ 285              		.syntax unified
+ 286              		.thumb
+ 287              		.thumb_func
+ 289              	toShuntVolage:
+ 290              	.LVL20:
+ 291              	.LFB242:
+  73:Core/Src/CurrentMonitor.c **** 
+  74:Core/Src/CurrentMonitor.c **** int16_t toShuntVolage(uint16_t regValue)
+  75:Core/Src/CurrentMonitor.c **** {
+ 292              		.loc 1 75 1 is_stmt 1 view -0
+ 293              		.cfi_startproc
+ 294              		@ args = 0, pretend = 0, frame = 0
+ 295              		@ frame_needed = 0, uses_anonymous_args = 0
+ 296              		@ link register save eliminated.
+  76:Core/Src/CurrentMonitor.c **** 
+  77:Core/Src/CurrentMonitor.c **** 	return ((regValue >> 3  ) * 4);
+ 297              		.loc 1 77 2 view .LVU51
+ 298              		.loc 1 77 28 is_stmt 0 view .LVU52
+ 299 0000 C008     		lsrs	r0, r0, #3
+ 300              	.LVL21:
+  78:Core/Src/CurrentMonitor.c **** }
+ 301              		.loc 1 78 1 view .LVU53
+ 302 0002 8000     		lsls	r0, r0, #2
+ 303 0004 7047     		bx	lr
+ 304              		.cfi_endproc
+ 305              	.LFE242:
+ 307              		.global	__aeabi_i2d
+ 308              		.global	__aeabi_ddiv
+ 309              		.global	__aeabi_d2uiz
+ 310              		.section	.text.getCurrent,"ax",%progbits
+ 311              		.align	1
+ 312              		.global	getCurrent
+ 313              		.syntax unified
+ 314              		.thumb
+ 315              		.thumb_func
+ 317              	getCurrent:
+ 318              	.LVL22:
+ 319              	.LFB243:
+  79:Core/Src/CurrentMonitor.c **** 
+  80:Core/Src/CurrentMonitor.c **** //all milli values
+  81:Core/Src/CurrentMonitor.c **** uint16_t vbus = 0;           
+  82:Core/Src/CurrentMonitor.c **** uint16_t vshunt = 0;         
+  83:Core/Src/CurrentMonitor.c **** uint16_t current = 0;        
+  84:Core/Src/CurrentMonitor.c **** uint16_t power = 0;          
+  85:Core/Src/CurrentMonitor.c **** 
+  86:Core/Src/CurrentMonitor.c **** int16_t getCurrent(uint8_t devAddress){
+ 320              		.loc 1 86 39 is_stmt 1 view -0
+ 321              		.cfi_startproc
+ 322              		@ args = 0, pretend = 0, frame = 0
+ 323              		@ frame_needed = 0, uses_anonymous_args = 0
+ 324              		.loc 1 86 39 is_stmt 0 view .LVU55
+ 325 0000 70B5     		push	{r4, r5, r6, lr}
+ 326              		.cfi_def_cfa_offset 16
+ 327              		.cfi_offset 4, -16
+ 328              		.cfi_offset 5, -12
+ 329              		.cfi_offset 6, -8
+ 330              		.cfi_offset 14, -4
+ARM GAS  C:\Temp\ccULnshv.s 			page 8
+
+
+ 331 0002 0646     		mov	r6, r0
+  87:Core/Src/CurrentMonitor.c **** 	int16_t rollingCurrent = 0;
+ 332              		.loc 1 87 2 is_stmt 1 view .LVU56
+ 333              	.LVL23:
+  88:Core/Src/CurrentMonitor.c **** 		
+  89:Core/Src/CurrentMonitor.c **** 		for (int i = 0 ; i < SENSOR_AVERAGING_NUMBER ; i++){
+ 334              		.loc 1 89 3 view .LVU57
+ 335              	.LBB2:
+ 336              		.loc 1 89 8 view .LVU58
+ 337              		.loc 1 89 12 is_stmt 0 view .LVU59
+ 338 0004 0024     		movs	r4, #0
+ 339              	.LBE2:
+  87:Core/Src/CurrentMonitor.c **** 	int16_t rollingCurrent = 0;
+ 340              		.loc 1 87 10 view .LVU60
+ 341 0006 2546     		mov	r5, r4
+ 342              	.LBB3:
+ 343              		.loc 1 89 3 view .LVU61
+ 344 0008 1BE0     		b	.L20
+ 345              	.LVL24:
+ 346              	.L21:
+  90:Core/Src/CurrentMonitor.c **** 				vshunt = toShuntVolage(ReadMem(devAddress,SENSOR_VSHUNT_MEM_ADDR));
+ 347              		.loc 1 90 5 is_stmt 1 discriminator 3 view .LVU62
+ 348              		.loc 1 90 14 is_stmt 0 discriminator 3 view .LVU63
+ 349 000a 0121     		movs	r1, #1
+ 350 000c 3046     		mov	r0, r6
+ 351 000e FFF7FEFF 		bl	ReadMem
+ 352              	.LVL25:
+ 353 0012 FFF7FEFF 		bl	toShuntVolage
+ 354              	.LVL26:
+ 355 0016 80B2     		uxth	r0, r0
+ 356              		.loc 1 90 12 discriminator 3 view .LVU64
+ 357 0018 114B     		ldr	r3, .L23+8
+ 358 001a 1880     		strh	r0, [r3]	@ movhi
+  91:Core/Src/CurrentMonitor.c **** 		current = ((vshunt)*1000/ACCURATE_SHUNT_RESISTOR_VALUE);                                         
+ 359              		.loc 1 91 3 is_stmt 1 discriminator 3 view .LVU65
+ 360              		.loc 1 91 27 is_stmt 0 discriminator 3 view .LVU66
+ 361 001c 4FF47A73 		mov	r3, #1000
+ 362 0020 03FB00F0 		mul	r0, r3, r0
+ 363 0024 FFF7FEFF 		bl	__aeabi_i2d
+ 364              	.LVL27:
+ 365 0028 0BA3     		adr	r3, .L23
+ 366 002a D3E90023 		ldrd	r2, [r3]
+ 367 002e FFF7FEFF 		bl	__aeabi_ddiv
+ 368              	.LVL28:
+ 369              		.loc 1 91 11 discriminator 3 view .LVU67
+ 370 0032 FFF7FEFF 		bl	__aeabi_d2uiz
+ 371              	.LVL29:
+ 372 0036 80B2     		uxth	r0, r0
+ 373 0038 0A4B     		ldr	r3, .L23+12
+ 374 003a 1880     		strh	r0, [r3]	@ movhi
+  92:Core/Src/CurrentMonitor.c **** 		rollingCurrent = rollingCurrent + current;
+ 375              		.loc 1 92 3 is_stmt 1 discriminator 3 view .LVU68
+ 376              		.loc 1 92 35 is_stmt 0 discriminator 3 view .LVU69
+ 377 003c 2844     		add	r0, r0, r5
+ 378              		.loc 1 92 18 discriminator 3 view .LVU70
+ 379 003e 05B2     		sxth	r5, r0
+ 380              	.LVL30:
+ARM GAS  C:\Temp\ccULnshv.s 			page 9
+
+
+  89:Core/Src/CurrentMonitor.c **** 				vshunt = toShuntVolage(ReadMem(devAddress,SENSOR_VSHUNT_MEM_ADDR));
+ 381              		.loc 1 89 51 is_stmt 1 discriminator 3 view .LVU71
+ 382 0040 0134     		adds	r4, r4, #1
+ 383              	.LVL31:
+ 384              	.L20:
+  89:Core/Src/CurrentMonitor.c **** 				vshunt = toShuntVolage(ReadMem(devAddress,SENSOR_VSHUNT_MEM_ADDR));
+ 385              		.loc 1 89 22 discriminator 1 view .LVU72
+ 386 0042 052C     		cmp	r4, #5
+ 387 0044 E1DD     		ble	.L21
+ 388              	.LBE3:
+  93:Core/Src/CurrentMonitor.c **** 		}
+  94:Core/Src/CurrentMonitor.c **** 
+  95:Core/Src/CurrentMonitor.c **** 	return rollingCurrent/SENSOR_AVERAGING_NUMBER;
+ 389              		.loc 1 95 2 view .LVU73
+ 390              		.loc 1 95 23 is_stmt 0 view .LVU74
+ 391 0046 0848     		ldr	r0, .L23+16
+ 392 0048 80FB0530 		smull	r3, r0, r0, r5
+ 393 004c A0EBE570 		sub	r0, r0, r5, asr #31
+  96:Core/Src/CurrentMonitor.c **** }
+ 394              		.loc 1 96 1 view .LVU75
+ 395 0050 00B2     		sxth	r0, r0
+ 396 0052 70BD     		pop	{r4, r5, r6, pc}
+ 397              	.LVL32:
+ 398              	.L24:
+ 399              		.loc 1 96 1 view .LVU76
+ 400 0054 AFF30080 		.align	3
+ 401              	.L23:
+ 402 0058 00000000 		.word	0
+ 403 005c 00B05940 		.word	1079619584
+ 404 0060 00000000 		.word	vshunt
+ 405 0064 00000000 		.word	current
+ 406 0068 ABAAAA2A 		.word	715827883
+ 407              		.cfi_endproc
+ 408              	.LFE243:
+ 410              		.section	.text.getCurrentRaw,"ax",%progbits
+ 411              		.align	1
+ 412              		.global	getCurrentRaw
+ 413              		.syntax unified
+ 414              		.thumb
+ 415              		.thumb_func
+ 417              	getCurrentRaw:
+ 418              	.LVL33:
+ 419              	.LFB244:
+  97:Core/Src/CurrentMonitor.c **** 
+  98:Core/Src/CurrentMonitor.c **** uint16_t rawCurrent;
+  99:Core/Src/CurrentMonitor.c **** uint16_t getCurrentRaw(uint8_t devAddres){
+ 420              		.loc 1 99 42 is_stmt 1 view -0
+ 421              		.cfi_startproc
+ 422              		@ args = 0, pretend = 0, frame = 0
+ 423              		@ frame_needed = 0, uses_anonymous_args = 0
+ 424              		.loc 1 99 42 is_stmt 0 view .LVU78
+ 425 0000 08B5     		push	{r3, lr}
+ 426              		.cfi_def_cfa_offset 8
+ 427              		.cfi_offset 3, -8
+ 428              		.cfi_offset 14, -4
+ 100:Core/Src/CurrentMonitor.c **** 	rawCurrent = ReadMem(devAddres,SENSOR_CURRENT_MEM_ADDR);
+ 429              		.loc 1 100 2 is_stmt 1 view .LVU79
+ARM GAS  C:\Temp\ccULnshv.s 			page 10
+
+
+ 430              		.loc 1 100 15 is_stmt 0 view .LVU80
+ 431 0002 0421     		movs	r1, #4
+ 432 0004 FFF7FEFF 		bl	ReadMem
+ 433              	.LVL34:
+ 434              		.loc 1 100 13 view .LVU81
+ 435 0008 014B     		ldr	r3, .L27
+ 436 000a 1880     		strh	r0, [r3]	@ movhi
+ 101:Core/Src/CurrentMonitor.c **** 	return rawCurrent;
+ 437              		.loc 1 101 2 is_stmt 1 view .LVU82
+ 102:Core/Src/CurrentMonitor.c **** }
+ 438              		.loc 1 102 1 is_stmt 0 view .LVU83
+ 439 000c 08BD     		pop	{r3, pc}
+ 440              	.L28:
+ 441 000e 00BF     		.align	2
+ 442              	.L27:
+ 443 0010 00000000 		.word	rawCurrent
+ 444              		.cfi_endproc
+ 445              	.LFE244:
+ 447              		.section	.text.getCurrentNew,"ax",%progbits
+ 448              		.align	1
+ 449              		.global	getCurrentNew
+ 450              		.syntax unified
+ 451              		.thumb
+ 452              		.thumb_func
+ 454              	getCurrentNew:
+ 455              	.LVL35:
+ 456              	.LFB245:
+ 103:Core/Src/CurrentMonitor.c **** 
+ 104:Core/Src/CurrentMonitor.c **** int16_t getCurrentNew(uint8_t devAddres){
+ 457              		.loc 1 104 41 is_stmt 1 view -0
+ 458              		.cfi_startproc
+ 459              		@ args = 0, pretend = 0, frame = 0
+ 460              		@ frame_needed = 0, uses_anonymous_args = 0
+ 461              		.loc 1 104 41 is_stmt 0 view .LVU85
+ 462 0000 08B5     		push	{r3, lr}
+ 463              		.cfi_def_cfa_offset 8
+ 464              		.cfi_offset 3, -8
+ 465              		.cfi_offset 14, -4
+ 105:Core/Src/CurrentMonitor.c **** 	current = signNumber16(getCurrentRaw(devAddres))*1000/SENSOR_CALIBRATION;
+ 466              		.loc 1 105 2 is_stmt 1 view .LVU86
+ 467              		.loc 1 105 12 is_stmt 0 view .LVU87
+ 468 0002 FFF7FEFF 		bl	getCurrentRaw
+ 469              	.LVL36:
+ 470              		.loc 1 105 12 view .LVU88
+ 471 0006 FFF7FEFF 		bl	signNumber16
+ 472              	.LVL37:
+ 473              		.loc 1 105 50 view .LVU89
+ 474 000a 4FF47A73 		mov	r3, #1000
+ 475 000e 03FB00F0 		mul	r0, r3, r0
+ 476              		.loc 1 105 55 view .LVU90
+ 477 0012 054B     		ldr	r3, .L31
+ 478 0014 83FB0023 		smull	r2, r3, r3, r0
+ 479 0018 0344     		add	r3, r3, r0
+ 480 001a C017     		asrs	r0, r0, #31
+ 481 001c C0EBE330 		rsb	r0, r0, r3, asr #15
+ 482              		.loc 1 105 10 view .LVU91
+ 483 0020 024B     		ldr	r3, .L31+4
+ARM GAS  C:\Temp\ccULnshv.s 			page 11
+
+
+ 484 0022 1880     		strh	r0, [r3]	@ movhi
+ 106:Core/Src/CurrentMonitor.c **** 	return current;
+ 485              		.loc 1 106 2 is_stmt 1 view .LVU92
+ 107:Core/Src/CurrentMonitor.c **** }
+ 486              		.loc 1 107 1 is_stmt 0 view .LVU93
+ 487 0024 00B2     		sxth	r0, r0
+ 488 0026 08BD     		pop	{r3, pc}
+ 489              	.L32:
+ 490              		.align	2
+ 491              	.L31:
+ 492 0028 01800080 		.word	-2147450879
+ 493 002c 00000000 		.word	current
+ 494              		.cfi_endproc
+ 495              	.LFE245:
+ 497              		.section	.text.getVBus,"ax",%progbits
+ 498              		.align	1
+ 499              		.global	getVBus
+ 500              		.syntax unified
+ 501              		.thumb
+ 502              		.thumb_func
+ 504              	getVBus:
+ 505              	.LVL38:
+ 506              	.LFB246:
+ 108:Core/Src/CurrentMonitor.c **** 
+ 109:Core/Src/CurrentMonitor.c **** 
+ 110:Core/Src/CurrentMonitor.c **** int16_t getVBus(uint8_t devAddress){
+ 507              		.loc 1 110 36 is_stmt 1 view -0
+ 508              		.cfi_startproc
+ 509              		@ args = 0, pretend = 0, frame = 0
+ 510              		@ frame_needed = 0, uses_anonymous_args = 0
+ 511              		.loc 1 110 36 is_stmt 0 view .LVU95
+ 512 0000 08B5     		push	{r3, lr}
+ 513              		.cfi_def_cfa_offset 8
+ 514              		.cfi_offset 3, -8
+ 515              		.cfi_offset 14, -4
+ 111:Core/Src/CurrentMonitor.c **** 	vbus = toBusVoltage(ReadMem(devAddress,SENSOR_VBUS_MEM_ADDR));
+ 516              		.loc 1 111 2 is_stmt 1 view .LVU96
+ 517              		.loc 1 111 9 is_stmt 0 view .LVU97
+ 518 0002 0221     		movs	r1, #2
+ 519 0004 FFF7FEFF 		bl	ReadMem
+ 520              	.LVL39:
+ 521              		.loc 1 111 9 view .LVU98
+ 522 0008 FFF7FEFF 		bl	toBusVoltage
+ 523              	.LVL40:
+ 524              		.loc 1 111 7 view .LVU99
+ 525 000c 014B     		ldr	r3, .L35
+ 526 000e 1880     		strh	r0, [r3]	@ movhi
+ 112:Core/Src/CurrentMonitor.c **** 	return vbus;
+ 527              		.loc 1 112 2 is_stmt 1 view .LVU100
+ 113:Core/Src/CurrentMonitor.c **** }
+ 528              		.loc 1 113 1 is_stmt 0 view .LVU101
+ 529 0010 08BD     		pop	{r3, pc}
+ 530              	.L36:
+ 531 0012 00BF     		.align	2
+ 532              	.L35:
+ 533 0014 00000000 		.word	vbus
+ 534              		.cfi_endproc
+ARM GAS  C:\Temp\ccULnshv.s 			page 12
+
+
+ 535              	.LFE246:
+ 537              		.section	.text.getPower,"ax",%progbits
+ 538              		.align	1
+ 539              		.global	getPower
+ 540              		.syntax unified
+ 541              		.thumb
+ 542              		.thumb_func
+ 544              	getPower:
+ 545              	.LFB247:
+ 114:Core/Src/CurrentMonitor.c **** 
+ 115:Core/Src/CurrentMonitor.c **** 
+ 116:Core/Src/CurrentMonitor.c **** int16_t getPower(){
+ 546              		.loc 1 116 19 is_stmt 1 view -0
+ 547              		.cfi_startproc
+ 548              		@ args = 0, pretend = 0, frame = 0
+ 549              		@ frame_needed = 0, uses_anonymous_args = 0
+ 550              		@ link register save eliminated.
+ 117:Core/Src/CurrentMonitor.c **** 	return current*vshunt;
+ 551              		.loc 1 117 2 view .LVU103
+ 552              		.loc 1 117 16 is_stmt 0 view .LVU104
+ 553 0000 034B     		ldr	r3, .L38
+ 554 0002 1888     		ldrh	r0, [r3]
+ 555 0004 034B     		ldr	r3, .L38+4
+ 556 0006 1B88     		ldrh	r3, [r3]
+ 557 0008 10FB03F0 		smulbb	r0, r0, r3
+ 118:Core/Src/CurrentMonitor.c **** }
+ 558              		.loc 1 118 1 view .LVU105
+ 559 000c 00B2     		sxth	r0, r0
+ 560 000e 7047     		bx	lr
+ 561              	.L39:
+ 562              		.align	2
+ 563              	.L38:
+ 564 0010 00000000 		.word	current
+ 565 0014 00000000 		.word	vshunt
+ 566              		.cfi_endproc
+ 567              	.LFE247:
+ 569              		.section	.text.getVShunt,"ax",%progbits
+ 570              		.align	1
+ 571              		.global	getVShunt
+ 572              		.syntax unified
+ 573              		.thumb
+ 574              		.thumb_func
+ 576              	getVShunt:
+ 577              	.LVL41:
+ 578              	.LFB248:
+ 119:Core/Src/CurrentMonitor.c **** 
+ 120:Core/Src/CurrentMonitor.c **** int16_t getVShunt(uint8_t devAddress){
+ 579              		.loc 1 120 38 is_stmt 1 view -0
+ 580              		.cfi_startproc
+ 581              		@ args = 0, pretend = 0, frame = 0
+ 582              		@ frame_needed = 0, uses_anonymous_args = 0
+ 583              		.loc 1 120 38 is_stmt 0 view .LVU107
+ 584 0000 08B5     		push	{r3, lr}
+ 585              		.cfi_def_cfa_offset 8
+ 586              		.cfi_offset 3, -8
+ 587              		.cfi_offset 14, -4
+ 121:Core/Src/CurrentMonitor.c **** 	vshunt = toShuntVolage(ReadMem(devAddress,SENSOR_VSHUNT_MEM_ADDR));
+ARM GAS  C:\Temp\ccULnshv.s 			page 13
+
+
+ 588              		.loc 1 121 2 is_stmt 1 view .LVU108
+ 589              		.loc 1 121 11 is_stmt 0 view .LVU109
+ 590 0002 0121     		movs	r1, #1
+ 591 0004 FFF7FEFF 		bl	ReadMem
+ 592              	.LVL42:
+ 593              		.loc 1 121 11 view .LVU110
+ 594 0008 FFF7FEFF 		bl	toShuntVolage
+ 595              	.LVL43:
+ 596              		.loc 1 121 9 view .LVU111
+ 597 000c 014B     		ldr	r3, .L42
+ 598 000e 1880     		strh	r0, [r3]	@ movhi
+ 122:Core/Src/CurrentMonitor.c **** 	return vshunt;
+ 599              		.loc 1 122 2 is_stmt 1 view .LVU112
+ 123:Core/Src/CurrentMonitor.c **** }
+ 600              		.loc 1 123 1 is_stmt 0 view .LVU113
+ 601 0010 08BD     		pop	{r3, pc}
+ 602              	.L43:
+ 603 0012 00BF     		.align	2
+ 604              	.L42:
+ 605 0014 00000000 		.word	vshunt
+ 606              		.cfi_endproc
+ 607              	.LFE248:
+ 609              		.section	.text.getAllVBus,"ax",%progbits
+ 610              		.align	1
+ 611              		.global	getAllVBus
+ 612              		.syntax unified
+ 613              		.thumb
+ 614              		.thumb_func
+ 616              	getAllVBus:
+ 617              	.LFB249:
+ 124:Core/Src/CurrentMonitor.c **** 
+ 125:Core/Src/CurrentMonitor.c **** void getAllVBus(){
+ 618              		.loc 1 125 18 is_stmt 1 view -0
+ 619              		.cfi_startproc
+ 620              		@ args = 0, pretend = 0, frame = 0
+ 621              		@ frame_needed = 0, uses_anonymous_args = 0
+ 622 0000 08B5     		push	{r3, lr}
+ 623              		.cfi_def_cfa_offset 8
+ 624              		.cfi_offset 3, -8
+ 625              		.cfi_offset 14, -4
+ 126:Core/Src/CurrentMonitor.c **** 	CurrentMonitor_Barrel[0]  = getVBus(BARREL_SENSE_ADDRESS); 
+ 626              		.loc 1 126 2 view .LVU115
+ 627              		.loc 1 126 30 is_stmt 0 view .LVU116
+ 628 0002 4420     		movs	r0, #68
+ 629 0004 FFF7FEFF 		bl	getVBus
+ 630              	.LVL44:
+ 631              		.loc 1 126 28 view .LVU117
+ 632 0008 064B     		ldr	r3, .L46
+ 633 000a 1880     		strh	r0, [r3]	@ movhi
+ 127:Core/Src/CurrentMonitor.c **** 	CurrentMonitor_Servo[0]   = getVBus(SERVO_SENSE_ADDRESS); 
+ 634              		.loc 1 127 2 is_stmt 1 view .LVU118
+ 635              		.loc 1 127 30 is_stmt 0 view .LVU119
+ 636 000c 4120     		movs	r0, #65
+ 637 000e FFF7FEFF 		bl	getVBus
+ 638              	.LVL45:
+ 639              		.loc 1 127 28 view .LVU120
+ 640 0012 054B     		ldr	r3, .L46+4
+ARM GAS  C:\Temp\ccULnshv.s 			page 14
+
+
+ 641 0014 1880     		strh	r0, [r3]	@ movhi
+ 128:Core/Src/CurrentMonitor.c **** 	CurrentMonitor_Stepper[0] = getVBus(STEPPER_SENSE_ADDRESS); 
+ 642              		.loc 1 128 2 is_stmt 1 view .LVU121
+ 643              		.loc 1 128 30 is_stmt 0 view .LVU122
+ 644 0016 4020     		movs	r0, #64
+ 645 0018 FFF7FEFF 		bl	getVBus
+ 646              	.LVL46:
+ 647              		.loc 1 128 28 view .LVU123
+ 648 001c 034B     		ldr	r3, .L46+8
+ 649 001e 1880     		strh	r0, [r3]	@ movhi
+ 129:Core/Src/CurrentMonitor.c **** }
+ 650              		.loc 1 129 1 view .LVU124
+ 651 0020 08BD     		pop	{r3, pc}
+ 652              	.L47:
+ 653 0022 00BF     		.align	2
+ 654              	.L46:
+ 655 0024 00000000 		.word	CurrentMonitor_Barrel
+ 656 0028 00000000 		.word	CurrentMonitor_Servo
+ 657 002c 00000000 		.word	CurrentMonitor_Stepper
+ 658              		.cfi_endproc
+ 659              	.LFE249:
+ 661              		.section	.text.getAllCurrents,"ax",%progbits
+ 662              		.align	1
+ 663              		.global	getAllCurrents
+ 664              		.syntax unified
+ 665              		.thumb
+ 666              		.thumb_func
+ 668              	getAllCurrents:
+ 669              	.LFB250:
+ 130:Core/Src/CurrentMonitor.c **** 
+ 131:Core/Src/CurrentMonitor.c **** void getAllCurrents(){
+ 670              		.loc 1 131 22 is_stmt 1 view -0
+ 671              		.cfi_startproc
+ 672              		@ args = 0, pretend = 0, frame = 0
+ 673              		@ frame_needed = 0, uses_anonymous_args = 0
+ 674 0000 08B5     		push	{r3, lr}
+ 675              		.cfi_def_cfa_offset 8
+ 676              		.cfi_offset 3, -8
+ 677              		.cfi_offset 14, -4
+ 132:Core/Src/CurrentMonitor.c **** 	CurrentMonitor_Barrel[1]  = getCurrentNew(BARREL_SENSE_ADDRESS); 
+ 678              		.loc 1 132 2 view .LVU126
+ 679              		.loc 1 132 30 is_stmt 0 view .LVU127
+ 680 0002 4420     		movs	r0, #68
+ 681 0004 FFF7FEFF 		bl	getCurrentNew
+ 682              	.LVL47:
+ 683              		.loc 1 132 28 view .LVU128
+ 684 0008 064B     		ldr	r3, .L50
+ 685 000a 5880     		strh	r0, [r3, #2]	@ movhi
+ 133:Core/Src/CurrentMonitor.c **** 	CurrentMonitor_Servo[1]   = getCurrentNew(SERVO_SENSE_ADDRESS); 
+ 686              		.loc 1 133 2 is_stmt 1 view .LVU129
+ 687              		.loc 1 133 30 is_stmt 0 view .LVU130
+ 688 000c 4120     		movs	r0, #65
+ 689 000e FFF7FEFF 		bl	getCurrentNew
+ 690              	.LVL48:
+ 691              		.loc 1 133 28 view .LVU131
+ 692 0012 054B     		ldr	r3, .L50+4
+ 693 0014 5880     		strh	r0, [r3, #2]	@ movhi
+ARM GAS  C:\Temp\ccULnshv.s 			page 15
+
+
+ 134:Core/Src/CurrentMonitor.c **** 	CurrentMonitor_Stepper[1] = getCurrentNew(STEPPER_SENSE_ADDRESS); 
+ 694              		.loc 1 134 2 is_stmt 1 view .LVU132
+ 695              		.loc 1 134 30 is_stmt 0 view .LVU133
+ 696 0016 4020     		movs	r0, #64
+ 697 0018 FFF7FEFF 		bl	getCurrentNew
+ 698              	.LVL49:
+ 699              		.loc 1 134 28 view .LVU134
+ 700 001c 034B     		ldr	r3, .L50+8
+ 701 001e 5880     		strh	r0, [r3, #2]	@ movhi
+ 135:Core/Src/CurrentMonitor.c **** }
+ 702              		.loc 1 135 1 view .LVU135
+ 703 0020 08BD     		pop	{r3, pc}
+ 704              	.L51:
+ 705 0022 00BF     		.align	2
+ 706              	.L50:
+ 707 0024 00000000 		.word	CurrentMonitor_Barrel
+ 708 0028 00000000 		.word	CurrentMonitor_Servo
+ 709 002c 00000000 		.word	CurrentMonitor_Stepper
+ 710              		.cfi_endproc
+ 711              	.LFE250:
+ 713              		.section	.text.getAll,"ax",%progbits
+ 714              		.align	1
+ 715              		.global	getAll
+ 716              		.syntax unified
+ 717              		.thumb
+ 718              		.thumb_func
+ 720              	getAll:
+ 721              	.LFB251:
+ 136:Core/Src/CurrentMonitor.c **** 
+ 137:Core/Src/CurrentMonitor.c **** int i = 0;
+ 138:Core/Src/CurrentMonitor.c **** void getAll(){
+ 722              		.loc 1 138 14 is_stmt 1 view -0
+ 723              		.cfi_startproc
+ 724              		@ args = 0, pretend = 0, frame = 0
+ 725              		@ frame_needed = 0, uses_anonymous_args = 0
+ 726 0000 08B5     		push	{r3, lr}
+ 727              		.cfi_def_cfa_offset 8
+ 728              		.cfi_offset 3, -8
+ 729              		.cfi_offset 14, -4
+ 139:Core/Src/CurrentMonitor.c **** 	if (i == 0){
+ 730              		.loc 1 139 2 view .LVU137
+ 731              		.loc 1 139 8 is_stmt 0 view .LVU138
+ 732 0002 0C4B     		ldr	r3, .L60
+ 733 0004 1B68     		ldr	r3, [r3]
+ 734              		.loc 1 139 5 view .LVU139
+ 735 0006 53B1     		cbz	r3, .L57
+ 736              	.L53:
+ 140:Core/Src/CurrentMonitor.c **** 		getAllVBus();
+ 141:Core/Src/CurrentMonitor.c **** 	}
+ 142:Core/Src/CurrentMonitor.c **** 	if (i == 1){
+ 737              		.loc 1 142 2 is_stmt 1 view .LVU140
+ 738              		.loc 1 142 8 is_stmt 0 view .LVU141
+ 739 0008 0A4B     		ldr	r3, .L60
+ 740 000a 1B68     		ldr	r3, [r3]
+ 741              		.loc 1 142 5 view .LVU142
+ 742 000c 012B     		cmp	r3, #1
+ 743 000e 09D0     		beq	.L58
+ARM GAS  C:\Temp\ccULnshv.s 			page 16
+
+
+ 744              	.L54:
+ 143:Core/Src/CurrentMonitor.c **** 		getAllCurrents();	
+ 144:Core/Src/CurrentMonitor.c **** 	}
+ 145:Core/Src/CurrentMonitor.c **** 	i++;
+ 745              		.loc 1 145 2 is_stmt 1 view .LVU143
+ 746              		.loc 1 145 3 is_stmt 0 view .LVU144
+ 747 0010 084A     		ldr	r2, .L60
+ 748 0012 1368     		ldr	r3, [r2]
+ 749 0014 0133     		adds	r3, r3, #1
+ 750 0016 1360     		str	r3, [r2]
+ 146:Core/Src/CurrentMonitor.c **** 	if (i == 2){
+ 751              		.loc 1 146 2 is_stmt 1 view .LVU145
+ 752              		.loc 1 146 5 is_stmt 0 view .LVU146
+ 753 0018 022B     		cmp	r3, #2
+ 754 001a 06D0     		beq	.L59
+ 755              	.L52:
+ 147:Core/Src/CurrentMonitor.c **** 		i = 0;
+ 148:Core/Src/CurrentMonitor.c **** 	}
+ 149:Core/Src/CurrentMonitor.c **** }
+ 756              		.loc 1 149 1 view .LVU147
+ 757 001c 08BD     		pop	{r3, pc}
+ 758              	.L57:
+ 140:Core/Src/CurrentMonitor.c **** 	}
+ 759              		.loc 1 140 3 is_stmt 1 view .LVU148
+ 760 001e FFF7FEFF 		bl	getAllVBus
+ 761              	.LVL50:
+ 762 0022 F1E7     		b	.L53
+ 763              	.L58:
+ 143:Core/Src/CurrentMonitor.c **** 	}
+ 764              		.loc 1 143 3 view .LVU149
+ 765 0024 FFF7FEFF 		bl	getAllCurrents
+ 766              	.LVL51:
+ 767 0028 F2E7     		b	.L54
+ 768              	.L59:
+ 147:Core/Src/CurrentMonitor.c **** 		i = 0;
+ 769              		.loc 1 147 3 view .LVU150
+ 147:Core/Src/CurrentMonitor.c **** 		i = 0;
+ 770              		.loc 1 147 5 is_stmt 0 view .LVU151
+ 771 002a 1346     		mov	r3, r2
+ 772 002c 0022     		movs	r2, #0
+ 773 002e 1A60     		str	r2, [r3]
+ 774              		.loc 1 149 1 view .LVU152
+ 775 0030 F4E7     		b	.L52
+ 776              	.L61:
+ 777 0032 00BF     		.align	2
+ 778              	.L60:
+ 779 0034 00000000 		.word	i
+ 780              		.cfi_endproc
+ 781              	.LFE251:
+ 783              		.section	.text.init_currentMonitor,"ax",%progbits
+ 784              		.align	1
+ 785              		.global	init_currentMonitor
+ 786              		.syntax unified
+ 787              		.thumb
+ 788              		.thumb_func
+ 790              	init_currentMonitor:
+ 791              	.LVL52:
+ARM GAS  C:\Temp\ccULnshv.s 			page 17
+
+
+ 792              	.LFB252:
+ 150:Core/Src/CurrentMonitor.c **** 
+ 151:Core/Src/CurrentMonitor.c **** void init_currentMonitor(uint8_t INA219_Address){
+ 793              		.loc 1 151 49 is_stmt 1 view -0
+ 794              		.cfi_startproc
+ 795              		@ args = 0, pretend = 0, frame = 0
+ 796              		@ frame_needed = 0, uses_anonymous_args = 0
+ 797              		.loc 1 151 49 is_stmt 0 view .LVU154
+ 798 0000 10B5     		push	{r4, lr}
+ 799              		.cfi_def_cfa_offset 8
+ 800              		.cfi_offset 4, -8
+ 801              		.cfi_offset 14, -4
+ 802 0002 0446     		mov	r4, r0
+ 152:Core/Src/CurrentMonitor.c ****     WriteMem(INA219_Address,SENSOR_CONFIGURATION_MEM_ADDR,SENSOR_CONFIGURATION_RESET);             
+ 803              		.loc 1 152 5 is_stmt 1 view .LVU155
+ 804 0004 4FF40042 		mov	r2, #32768
+ 805 0008 0021     		movs	r1, #0
+ 806 000a FFF7FEFF 		bl	WriteMem
+ 807              	.LVL53:
+ 153:Core/Src/CurrentMonitor.c **** 	calibrate(INA219_Address,SENSOR_CALIBRATION);
+ 808              		.loc 1 153 2 view .LVU156
+ 809 000e 4FF6FF71 		movw	r1, #65535
+ 810 0012 2046     		mov	r0, r4
+ 811 0014 FFF7FEFF 		bl	calibrate
+ 812              	.LVL54:
+ 154:Core/Src/CurrentMonitor.c **** }
+ 813              		.loc 1 154 1 is_stmt 0 view .LVU157
+ 814 0018 10BD     		pop	{r4, pc}
+ 815              		.cfi_endproc
+ 816              	.LFE252:
+ 818              		.section	.text.init_AllCurrentMonitors,"ax",%progbits
+ 819              		.align	1
+ 820              		.global	init_AllCurrentMonitors
+ 821              		.syntax unified
+ 822              		.thumb
+ 823              		.thumb_func
+ 825              	init_AllCurrentMonitors:
+ 826              	.LFB253:
+ 155:Core/Src/CurrentMonitor.c **** 
+ 156:Core/Src/CurrentMonitor.c **** void init_AllCurrentMonitors(){
+ 827              		.loc 1 156 31 is_stmt 1 view -0
+ 828              		.cfi_startproc
+ 829              		@ args = 0, pretend = 0, frame = 0
+ 830              		@ frame_needed = 0, uses_anonymous_args = 0
+ 831 0000 10B5     		push	{r4, lr}
+ 832              		.cfi_def_cfa_offset 8
+ 833              		.cfi_offset 4, -8
+ 834              		.cfi_offset 14, -4
+ 157:Core/Src/CurrentMonitor.c **** 	init_currentMonitor(BARREL_SENSE_ADDRESS);
+ 835              		.loc 1 157 2 view .LVU159
+ 836 0002 4420     		movs	r0, #68
+ 837 0004 FFF7FEFF 		bl	init_currentMonitor
+ 838              	.LVL55:
+ 158:Core/Src/CurrentMonitor.c **** 	init_currentMonitor(SERVO_SENSE_ADDRESS);
+ 839              		.loc 1 158 2 view .LVU160
+ 840 0008 4120     		movs	r0, #65
+ 841 000a FFF7FEFF 		bl	init_currentMonitor
+ARM GAS  C:\Temp\ccULnshv.s 			page 18
+
+
+ 842              	.LVL56:
+ 159:Core/Src/CurrentMonitor.c **** 	init_currentMonitor(STEPPER_SENSE_ADDRESS);
+ 843              		.loc 1 159 2 view .LVU161
+ 844 000e 4020     		movs	r0, #64
+ 845 0010 FFF7FEFF 		bl	init_currentMonitor
+ 846              	.LVL57:
+ 160:Core/Src/CurrentMonitor.c **** 
+ 161:Core/Src/CurrentMonitor.c **** 	HAL_TIM_RegisterCallback(&htim14,HAL_TIM_PERIOD_ELAPSED_CB_ID,getAll);
+ 847              		.loc 1 161 2 view .LVU162
+ 848 0014 044C     		ldr	r4, .L66
+ 849 0016 054A     		ldr	r2, .L66+4
+ 850 0018 0E21     		movs	r1, #14
+ 851 001a 2046     		mov	r0, r4
+ 852 001c FFF7FEFF 		bl	HAL_TIM_RegisterCallback
+ 853              	.LVL58:
+ 162:Core/Src/CurrentMonitor.c ****     HAL_TIM_Base_Start_IT(&htim14); 
+ 854              		.loc 1 162 5 view .LVU163
+ 855 0020 2046     		mov	r0, r4
+ 856 0022 FFF7FEFF 		bl	HAL_TIM_Base_Start_IT
+ 857              	.LVL59:
+ 163:Core/Src/CurrentMonitor.c **** }...
+ 858              		.loc 1 163 1 is_stmt 0 view .LVU164
+ 859 0026 10BD     		pop	{r4, pc}
+ 860              	.L67:
+ 861              		.align	2
+ 862              	.L66:
+ 863 0028 00000000 		.word	htim14
+ 864 002c 00000000 		.word	getAll
+ 865              		.cfi_endproc
+ 866              	.LFE253:
+ 868              		.global	i
+ 869              		.section	.bss.i,"aw",%nobits
+ 870              		.align	2
+ 873              	i:
+ 874 0000 00000000 		.space	4
+ 875              		.global	rawCurrent
+ 876              		.section	.bss.rawCurrent,"aw",%nobits
+ 877              		.align	1
+ 880              	rawCurrent:
+ 881 0000 0000     		.space	2
+ 882              		.global	power
+ 883              		.section	.bss.power,"aw",%nobits
+ 884              		.align	1
+ 887              	power:
+ 888 0000 0000     		.space	2
+ 889              		.global	current
+ 890              		.section	.bss.current,"aw",%nobits
+ 891              		.align	1
+ 894              	current:
+ 895 0000 0000     		.space	2
+ 896              		.global	vshunt
+ 897              		.section	.bss.vshunt,"aw",%nobits
+ 898              		.align	1
+ 901              	vshunt:
+ 902 0000 0000     		.space	2
+ 903              		.global	vbus
+ 904              		.section	.bss.vbus,"aw",%nobits
+ARM GAS  C:\Temp\ccULnshv.s 			page 19
+
+
+ 905              		.align	1
+ 908              	vbus:
+ 909 0000 0000     		.space	2
+ 910              		.text
+ 911              	.Letext0:
+ 912              		.file 2 "c:\\users\\jessejabezarendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-
+ 913              		.file 3 "c:\\users\\jessejabezarendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-
+ 914              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 915              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 916              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 917              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h"
+ 918              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ARM GAS  C:\Temp\ccULnshv.s 			page 20
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 CurrentMonitor.c
+  C:\Temp\ccULnshv.s:21     .text.WriteMem:00000000 $t
+  C:\Temp\ccULnshv.s:26     .text.WriteMem:00000000 WriteMem
+  C:\Temp\ccULnshv.s:74     .text.WriteMem:00000030 $d
+  C:\Temp\ccULnshv.s:79     .text.ReadMem:00000000 $t
+  C:\Temp\ccULnshv.s:84     .text.ReadMem:00000000 ReadMem
+  C:\Temp\ccULnshv.s:131    .text.ReadMem:00000030 $d
+  C:\Temp\ccULnshv.s:136    .text.calibrate:00000000 $t
+  C:\Temp\ccULnshv.s:142    .text.calibrate:00000000 calibrate
+  C:\Temp\ccULnshv.s:167    .text.signNumber16:00000000 $t
+  C:\Temp\ccULnshv.s:173    .text.signNumber16:00000000 signNumber16
+  C:\Temp\ccULnshv.s:192    .text.toBusVoltage:00000000 $t
+  C:\Temp\ccULnshv.s:198    .text.toBusVoltage:00000000 toBusVoltage
+  C:\Temp\ccULnshv.s:217    .text.toCurrent_raw:00000000 $t
+  C:\Temp\ccULnshv.s:223    .text.toCurrent_raw:00000000 toCurrent_raw
+  C:\Temp\ccULnshv.s:242    .text.toCurrent:00000000 $t
+  C:\Temp\ccULnshv.s:248    .text.toCurrent:00000000 toCurrent
+  C:\Temp\ccULnshv.s:278    .text.toCurrent:00000018 $d
+  C:\Temp\ccULnshv.s:283    .text.toShuntVolage:00000000 $t
+  C:\Temp\ccULnshv.s:289    .text.toShuntVolage:00000000 toShuntVolage
+  C:\Temp\ccULnshv.s:311    .text.getCurrent:00000000 $t
+  C:\Temp\ccULnshv.s:317    .text.getCurrent:00000000 getCurrent
+  C:\Temp\ccULnshv.s:402    .text.getCurrent:00000058 $d
+  C:\Temp\ccULnshv.s:901    .bss.vshunt:00000000 vshunt
+  C:\Temp\ccULnshv.s:894    .bss.current:00000000 current
+  C:\Temp\ccULnshv.s:411    .text.getCurrentRaw:00000000 $t
+  C:\Temp\ccULnshv.s:417    .text.getCurrentRaw:00000000 getCurrentRaw
+  C:\Temp\ccULnshv.s:443    .text.getCurrentRaw:00000010 $d
+  C:\Temp\ccULnshv.s:880    .bss.rawCurrent:00000000 rawCurrent
+  C:\Temp\ccULnshv.s:448    .text.getCurrentNew:00000000 $t
+  C:\Temp\ccULnshv.s:454    .text.getCurrentNew:00000000 getCurrentNew
+  C:\Temp\ccULnshv.s:492    .text.getCurrentNew:00000028 $d
+  C:\Temp\ccULnshv.s:498    .text.getVBus:00000000 $t
+  C:\Temp\ccULnshv.s:504    .text.getVBus:00000000 getVBus
+  C:\Temp\ccULnshv.s:533    .text.getVBus:00000014 $d
+  C:\Temp\ccULnshv.s:908    .bss.vbus:00000000 vbus
+  C:\Temp\ccULnshv.s:538    .text.getPower:00000000 $t
+  C:\Temp\ccULnshv.s:544    .text.getPower:00000000 getPower
+  C:\Temp\ccULnshv.s:564    .text.getPower:00000010 $d
+  C:\Temp\ccULnshv.s:570    .text.getVShunt:00000000 $t
+  C:\Temp\ccULnshv.s:576    .text.getVShunt:00000000 getVShunt
+  C:\Temp\ccULnshv.s:605    .text.getVShunt:00000014 $d
+  C:\Temp\ccULnshv.s:610    .text.getAllVBus:00000000 $t
+  C:\Temp\ccULnshv.s:616    .text.getAllVBus:00000000 getAllVBus
+  C:\Temp\ccULnshv.s:655    .text.getAllVBus:00000024 $d
+  C:\Temp\ccULnshv.s:662    .text.getAllCurrents:00000000 $t
+  C:\Temp\ccULnshv.s:668    .text.getAllCurrents:00000000 getAllCurrents
+  C:\Temp\ccULnshv.s:707    .text.getAllCurrents:00000024 $d
+  C:\Temp\ccULnshv.s:714    .text.getAll:00000000 $t
+  C:\Temp\ccULnshv.s:720    .text.getAll:00000000 getAll
+  C:\Temp\ccULnshv.s:779    .text.getAll:00000034 $d
+  C:\Temp\ccULnshv.s:873    .bss.i:00000000 i
+  C:\Temp\ccULnshv.s:784    .text.init_currentMonitor:00000000 $t
+  C:\Temp\ccULnshv.s:790    .text.init_currentMonitor:00000000 init_currentMonitor
+  C:\Temp\ccULnshv.s:819    .text.init_AllCurrentMonitors:00000000 $t
+  C:\Temp\ccULnshv.s:825    .text.init_AllCurrentMonitors:00000000 init_AllCurrentMonitors
+ARM GAS  C:\Temp\ccULnshv.s 			page 21
+
+
+  C:\Temp\ccULnshv.s:863    .text.init_AllCurrentMonitors:00000028 $d
+  C:\Temp\ccULnshv.s:870    .bss.i:00000000 $d
+  C:\Temp\ccULnshv.s:877    .bss.rawCurrent:00000000 $d
+  C:\Temp\ccULnshv.s:887    .bss.power:00000000 power
+  C:\Temp\ccULnshv.s:884    .bss.power:00000000 $d
+  C:\Temp\ccULnshv.s:891    .bss.current:00000000 $d
+  C:\Temp\ccULnshv.s:898    .bss.vshunt:00000000 $d
+  C:\Temp\ccULnshv.s:905    .bss.vbus:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_I2C_Mem_Write
+hi2c1
+HAL_I2C_Mem_Read
+__aeabi_i2d
+__aeabi_ddiv
+__aeabi_d2uiz
+CurrentMonitor_Barrel
+CurrentMonitor_Servo
+CurrentMonitor_Stepper
+HAL_TIM_RegisterCallback
+HAL_TIM_Base_Start_IT
+htim14

@@ -1,0 +1,269 @@
+ARM GAS  C:\Temp\ccMz7WnL.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"Relays.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/Relays.c"
+  20              		.section	.text.toggleRelay,"ax",%progbits
+  21              		.align	1
+  22              		.global	toggleRelay
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	toggleRelay:
+  28              	.LVL0:
+  29              	.LFB235:
+   1:Core/Src/Relays.c **** //********************************************************************
+   2:Core/Src/Relays.c **** //*                      Mech Educational Board                      *
+   3:Core/Src/Relays.c **** //*                         Relay Library                            *
+   4:Core/Src/Relays.c **** //*==================================================================*
+   5:Core/Src/Relays.c **** //* @author:    Jesse Jabez Arendse                                  *
+   6:Core/Src/Relays.c **** //* @date:      23-10-2023                                           *
+   7:Core/Src/Relays.c **** //*==================================================================*
+   8:Core/Src/Relays.c **** 
+   9:Core/Src/Relays.c **** #include "main.h"
+  10:Core/Src/Relays.c **** #include "Relays.h"
+  11:Core/Src/Relays.c **** 
+  12:Core/Src/Relays.c **** 
+  13:Core/Src/Relays.c **** void toggleRelay(int relayNumber){
+  30              		.loc 1 13 34 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 13 34 is_stmt 0 view .LVU1
+  35 0000 10B5     		push	{r4, lr}
+  36              		.cfi_def_cfa_offset 8
+  37              		.cfi_offset 4, -8
+  38              		.cfi_offset 14, -4
+  39 0002 0446     		mov	r4, r0
+  14:Core/Src/Relays.c ****     if (relayNumber == RELAY_1){
+  40              		.loc 1 14 5 is_stmt 1 view .LVU2
+  41              		.loc 1 14 8 is_stmt 0 view .LVU3
+  42 0004 0128     		cmp	r0, #1
+  43 0006 02D0     		beq	.L5
+  44              	.LVL1:
+ARM GAS  C:\Temp\ccMz7WnL.s 			page 2
+
+
+  45              	.L2:
+  15:Core/Src/Relays.c ****         HAL_GPIO_TogglePin(Relay_1_GPIO_Port , Relay_1_Pin);
+  16:Core/Src/Relays.c ****     }
+  17:Core/Src/Relays.c ****     if (relayNumber == RELAY_2){
+  46              		.loc 1 17 5 is_stmt 1 view .LVU4
+  47              		.loc 1 17 8 is_stmt 0 view .LVU5
+  48 0008 022C     		cmp	r4, #2
+  49 000a 05D0     		beq	.L6
+  50              	.L1:
+  18:Core/Src/Relays.c ****         HAL_GPIO_TogglePin(Relay_2_GPIO_Port , Relay_2_Pin);
+  19:Core/Src/Relays.c ****     }
+  20:Core/Src/Relays.c **** }
+  51              		.loc 1 20 1 view .LVU6
+  52 000c 10BD     		pop	{r4, pc}
+  53              	.LVL2:
+  54              	.L5:
+  15:Core/Src/Relays.c ****         HAL_GPIO_TogglePin(Relay_1_GPIO_Port , Relay_1_Pin);
+  55              		.loc 1 15 9 is_stmt 1 view .LVU7
+  56 000e 0421     		movs	r1, #4
+  57 0010 0448     		ldr	r0, .L7
+  58              	.LVL3:
+  15:Core/Src/Relays.c ****         HAL_GPIO_TogglePin(Relay_1_GPIO_Port , Relay_1_Pin);
+  59              		.loc 1 15 9 is_stmt 0 view .LVU8
+  60 0012 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+  61              	.LVL4:
+  62 0016 F7E7     		b	.L2
+  63              	.L6:
+  18:Core/Src/Relays.c ****         HAL_GPIO_TogglePin(Relay_2_GPIO_Port , Relay_2_Pin);
+  64              		.loc 1 18 9 is_stmt 1 view .LVU9
+  65 0018 0821     		movs	r1, #8
+  66 001a 0248     		ldr	r0, .L7
+  67 001c FFF7FEFF 		bl	HAL_GPIO_TogglePin
+  68              	.LVL5:
+  69              		.loc 1 20 1 is_stmt 0 view .LVU10
+  70 0020 F4E7     		b	.L1
+  71              	.L8:
+  72 0022 00BF     		.align	2
+  73              	.L7:
+  74 0024 000C0240 		.word	1073875968
+  75              		.cfi_endproc
+  76              	.LFE235:
+  78              		.section	.text.setRelay,"ax",%progbits
+  79              		.align	1
+  80              		.global	setRelay
+  81              		.syntax unified
+  82              		.thumb
+  83              		.thumb_func
+  85              	setRelay:
+  86              	.LVL6:
+  87              	.LFB236:
+  21:Core/Src/Relays.c **** 
+  22:Core/Src/Relays.c **** void setRelay(int relayNumber,int relayMode){
+  88              		.loc 1 22 45 is_stmt 1 view -0
+  89              		.cfi_startproc
+  90              		@ args = 0, pretend = 0, frame = 0
+  91              		@ frame_needed = 0, uses_anonymous_args = 0
+  92              		.loc 1 22 45 is_stmt 0 view .LVU12
+ARM GAS  C:\Temp\ccMz7WnL.s 			page 3
+
+
+  93 0000 38B5     		push	{r3, r4, r5, lr}
+  94              		.cfi_def_cfa_offset 16
+  95              		.cfi_offset 3, -16
+  96              		.cfi_offset 4, -12
+  97              		.cfi_offset 5, -8
+  98              		.cfi_offset 14, -4
+  99 0002 0446     		mov	r4, r0
+ 100 0004 0D46     		mov	r5, r1
+  23:Core/Src/Relays.c ****     if (relayNumber == RELAY_1){
+ 101              		.loc 1 23 5 is_stmt 1 view .LVU13
+ 102              		.loc 1 23 8 is_stmt 0 view .LVU14
+ 103 0006 0128     		cmp	r0, #1
+ 104 0008 02D0     		beq	.L15
+ 105              	.LVL7:
+ 106              	.L10:
+  24:Core/Src/Relays.c ****         if (relayMode == RELAY_OPEN){
+  25:Core/Src/Relays.c ****             HAL_GPIO_WritePin(Relay_1_GPIO_Port , Relay_1_Pin , 0);
+  26:Core/Src/Relays.c ****         }
+  27:Core/Src/Relays.c ****         if (relayMode == RELAY_CLOSE){
+  28:Core/Src/Relays.c ****             HAL_GPIO_WritePin(Relay_1_GPIO_Port , Relay_1_Pin , 1);
+  29:Core/Src/Relays.c ****         }
+  30:Core/Src/Relays.c ****         else{}                                                  //if you don't use the relay.h defi
+ 107              		.loc 1 30 14 is_stmt 1 view .LVU15
+  31:Core/Src/Relays.c ****     }
+  32:Core/Src/Relays.c ****     if (relayNumber == RELAY_2){
+ 108              		.loc 1 32 5 view .LVU16
+ 109              		.loc 1 32 8 is_stmt 0 view .LVU17
+ 110 000a 022C     		cmp	r4, #2
+ 111 000c 0FD0     		beq	.L16
+ 112              	.L9:
+  33:Core/Src/Relays.c ****         if (relayMode == RELAY_OPEN){
+  34:Core/Src/Relays.c ****             HAL_GPIO_WritePin(Relay_2_GPIO_Port , Relay_2_Pin , 0);
+  35:Core/Src/Relays.c ****         }
+  36:Core/Src/Relays.c ****         if (relayMode == RELAY_CLOSE){
+  37:Core/Src/Relays.c ****             HAL_GPIO_WritePin(Relay_2_GPIO_Port , Relay_2_Pin , 1);
+  38:Core/Src/Relays.c ****         }
+  39:Core/Src/Relays.c ****         else{}                                                  //if you don't use the relay.h defi
+  40:Core/Src/Relays.c ****     }
+  41:Core/Src/Relays.c **** }...
+ 113              		.loc 1 41 1 view .LVU18
+ 114 000e 38BD     		pop	{r3, r4, r5, pc}
+ 115              	.LVL8:
+ 116              	.L15:
+  24:Core/Src/Relays.c ****         if (relayMode == RELAY_OPEN){
+ 117              		.loc 1 24 9 is_stmt 1 view .LVU19
+  24:Core/Src/Relays.c ****         if (relayMode == RELAY_OPEN){
+ 118              		.loc 1 24 12 is_stmt 0 view .LVU20
+ 119 0010 39B1     		cbz	r1, .L17
+ 120              	.LVL9:
+ 121              	.L11:
+  27:Core/Src/Relays.c ****         if (relayMode == RELAY_CLOSE){
+ 122              		.loc 1 27 9 is_stmt 1 view .LVU21
+  27:Core/Src/Relays.c ****         if (relayMode == RELAY_CLOSE){
+ 123              		.loc 1 27 12 is_stmt 0 view .LVU22
+ 124 0012 012D     		cmp	r5, #1
+ 125 0014 F9D1     		bne	.L10
+  28:Core/Src/Relays.c ****             HAL_GPIO_WritePin(Relay_1_GPIO_Port , Relay_1_Pin , 1);
+ARM GAS  C:\Temp\ccMz7WnL.s 			page 4
+
+
+ 126              		.loc 1 28 13 is_stmt 1 view .LVU23
+ 127 0016 0122     		movs	r2, #1
+ 128 0018 0421     		movs	r1, #4
+ 129 001a 0C48     		ldr	r0, .L19
+ 130 001c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 131              	.LVL10:
+ 132 0020 F3E7     		b	.L10
+ 133              	.LVL11:
+ 134              	.L17:
+  25:Core/Src/Relays.c ****             HAL_GPIO_WritePin(Relay_1_GPIO_Port , Relay_1_Pin , 0);
+ 135              		.loc 1 25 13 view .LVU24
+ 136 0022 0022     		movs	r2, #0
+ 137 0024 0421     		movs	r1, #4
+ 138              	.LVL12:
+  25:Core/Src/Relays.c ****             HAL_GPIO_WritePin(Relay_1_GPIO_Port , Relay_1_Pin , 0);
+ 139              		.loc 1 25 13 is_stmt 0 view .LVU25
+ 140 0026 0948     		ldr	r0, .L19
+ 141              	.LVL13:
+  25:Core/Src/Relays.c ****             HAL_GPIO_WritePin(Relay_1_GPIO_Port , Relay_1_Pin , 0);
+ 142              		.loc 1 25 13 view .LVU26
+ 143 0028 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 144              	.LVL14:
+ 145 002c F1E7     		b	.L11
+ 146              	.L16:
+  33:Core/Src/Relays.c ****         if (relayMode == RELAY_OPEN){
+ 147              		.loc 1 33 9 is_stmt 1 view .LVU27
+  33:Core/Src/Relays.c ****         if (relayMode == RELAY_OPEN){
+ 148              		.loc 1 33 12 is_stmt 0 view .LVU28
+ 149 002e 3DB1     		cbz	r5, .L18
+ 150              	.L13:
+  36:Core/Src/Relays.c ****         if (relayMode == RELAY_CLOSE){
+ 151              		.loc 1 36 9 is_stmt 1 view .LVU29
+  36:Core/Src/Relays.c ****         if (relayMode == RELAY_CLOSE){
+ 152              		.loc 1 36 12 is_stmt 0 view .LVU30
+ 153 0030 012D     		cmp	r5, #1
+ 154 0032 ECD1     		bne	.L9
+  37:Core/Src/Relays.c ****             HAL_GPIO_WritePin(Relay_2_GPIO_Port , Relay_2_Pin , 1);
+ 155              		.loc 1 37 13 is_stmt 1 view .LVU31
+ 156 0034 0122     		movs	r2, #1
+ 157 0036 0821     		movs	r1, #8
+ 158 0038 0448     		ldr	r0, .L19
+ 159 003a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 160              	.LVL15:
+  39:Core/Src/Relays.c ****         else{}                                                  //if you don't use the relay.h defi
+ 161              		.loc 1 39 14 view .LVU32
+ 162              		.loc 1 41 1 is_stmt 0 view .LVU33
+ 163 003e E6E7     		b	.L9
+ 164              	.L18:
+  34:Core/Src/Relays.c ****             HAL_GPIO_WritePin(Relay_2_GPIO_Port , Relay_2_Pin , 0);
+ 165              		.loc 1 34 13 is_stmt 1 view .LVU34
+ 166 0040 0022     		movs	r2, #0
+ 167 0042 0821     		movs	r1, #8
+ 168 0044 0148     		ldr	r0, .L19
+ 169 0046 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 170              	.LVL16:
+ 171 004a F1E7     		b	.L13
+ 172              	.L20:
+ARM GAS  C:\Temp\ccMz7WnL.s 			page 5
+
+
+ 173              		.align	2
+ 174              	.L19:
+ 175 004c 000C0240 		.word	1073875968
+ 176              		.cfi_endproc
+ 177              	.LFE236:
+ 179              		.text
+ 180              	.Letext0:
+ 181              		.file 2 "c:\\users\\jessejabezarendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-
+ 182              		.file 3 "c:\\users\\jessejabezarendse\\appdata\\roaming\\code\\user\\globalstorage\\bmd.stm32-for-
+ 183              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 184              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ARM GAS  C:\Temp\ccMz7WnL.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 Relays.c
+  C:\Temp\ccMz7WnL.s:21     .text.toggleRelay:00000000 $t
+  C:\Temp\ccMz7WnL.s:27     .text.toggleRelay:00000000 toggleRelay
+  C:\Temp\ccMz7WnL.s:74     .text.toggleRelay:00000024 $d
+  C:\Temp\ccMz7WnL.s:79     .text.setRelay:00000000 $t
+  C:\Temp\ccMz7WnL.s:85     .text.setRelay:00000000 setRelay
+  C:\Temp\ccMz7WnL.s:175    .text.setRelay:0000004c $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_TogglePin
+HAL_GPIO_WritePin
